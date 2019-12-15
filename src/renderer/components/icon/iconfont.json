@@ -1,0 +1,16 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "4171091",
+      "name": "目录",
+      "font_class": "mulu",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    }
+  ]
+}
