@@ -1,8 +1,4 @@
-'use strict'
-
 import { app, BrowserWindow } from 'electron'
-import path from 'path'
-import os from 'os'
 
 /**
  * Set `__static` path to static files in production
@@ -10,7 +6,6 @@ import os from 'os'
  */
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
- 
 }
 
 let mainWindow
@@ -19,19 +14,15 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 function createWindow () {
-
-  BrowserWindow.addDevToolsExtension(
-    'C:/Users/nss/Desktop/ChromeGo_SkyZip/User Data/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.1.1_0'
-    )
-  
   /**
    * Initial window options
    */
-  
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 700,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    minWidth:600,
+    webPreferences:{webSecurity: false}
   })
 
   mainWindow.loadURL(winURL)

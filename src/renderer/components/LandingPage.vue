@@ -1,13 +1,13 @@
 <template>
   <div class="wrapper">
     <a-drawer @close="onClose" width="220" placement="left" :closable="false" :visible="visible">
-      <index-mode :navigation="navigation"></index-mode>
+      <index-mode :navigation="navigation" :jumpTo="jumpTo"></index-mode>
     </a-drawer>
     <transition name="slide-down">
       <div class="title-wrapper" v-show="ifTitleShow">
         <div class="left">返回</div>
         <div class="right">
-          <div class="icon-wrapper">图标</div>
+          <div class="icon-wrapper" @click="newPage()">新建</div>
           <div class="icon-wrapper">图标</div>
           <div class="icon-wrapper">图标</div>
         </div>
@@ -23,14 +23,39 @@
     </div>
     <transition name="slide-down">
       <div class="boot-wrapper" v-show="ifTitleShow">
-        <svg  @click="showDrawer" class="icon left" aria-hidden="true">
-          <use xlink:href="#icon-mulu"></use>
-        </svg>
-        <div class="right">
-          <div class="icon-wrapper">图标</div>
-          <div class="icon-wrapper">图标</div>
-          <a-popover  trigger="click" v-model="isShowAa">
-            <div class="icon-wrapper">Aa</div>
+        <div style="width:600px">
+          <a-slider id="test" :defaultValue="30" :max="total" :min="0" @change="onLocationChange" :step="3" />
+        </div>
+        <div>
+          <svg @click="showDrawer" class="icon left" aria-hidden="true">
+            <use xlink:href="#icon-mulu" />
+          </svg>
+        </div>
+        <div>
+          <a-popover trigger="click">
+            <template slot="content">
+              <div class="fontType">
+                <div style="margin:10px">
+                  字号
+                  <a-button-group>
+                    <a-button @click="changeFontSize(0)">
+                      <a-icon type="left" />
+                    </a-button>
+                    <a-button @click="changeFontSize(1)">
+                      <a-icon type="right" />
+                    </a-button>
+                  </a-button-group>
+                </div>
+                <div style="margin:10px">
+                  字体
+                  <a-button-group>
+                    <a-button>简体</a-button>
+                    <a-button>繁体</a-button>
+                  </a-button-group>
+                </div>
+              </div>
+            </template>
+            <div>Aa</div>
           </a-popover>
         </div>
       </div>
@@ -39,89 +64,137 @@
 </template>
 
 <script>
-
-import SystemInformation from "./LandingPage/SystemInformation";
-import Epub from "epubjs";
-import indexMode from "./indexMode";
-const DOWNLODAD_URL = "src/renderer/components/book/jxyz.epub";
-global.Epub = Epub;
+import SystemInformation from './LandingPage/SystemInformation'
+import Epub from 'epubjs'
+import indexMode from './indexMode'
+const DOWNLODAD_URL = 'src/renderer/components/book/jxyz.epub'
+const remote = require('electron').remote;
+const BrowserWindow = remote.BrowserWindow;
+global.Epub = Epub
 export default {
-  name: "landing-page",
+  name: 'landing-page',
   components: { SystemInformation, indexMode },
-  data() {
+  data () {
     return {
+      total: 0,
       ifTitleShow: false,
       visible: false,
       buttonWidth: 70,
-      text: "Are you sure to delete this task?",
+      text: 'Are you sure to delete this task?',
       navigation: {},
-      isShowAa: false
-    };
+      isShowAa: false,
+      fontSize: 24,
+      locations: {}// 定位
+    }
   },
-  mounted() {
-    this.showEpub();
+  mounted () {
+    // this.showEpub()
   },
   methods: {
-    handleChange(value) {
-      console.log(`selected ${value}`);
+    newPage(){
+      let win = new BrowserWindow({ width: 800, height: 600 });
+      win.loadURL('https://github.com');
+      win.on("closed",()=>{
+        win = null;
+      })
     },
-    showAd() {
+    onLocationChange (index) {
+      this.rendition.display(this.locations.cfiFromLocation(index))
+    },
+    handleChange (value) {
+      console.log(`selected ${value}`)
+    },
+    showAd () {
       this.isShowAa = !this.isShowAa
     },
-    confirm() {
-      message.info("Clicked on Yes.");
+    confirm () {
+      message.info('Clicked on Yes.')
     },
     // 电子书解析渲染
-    showEpub() {
+    showEpub () {
       // 生成book
-      this.book = new Epub(DOWNLODAD_URL);
+      this.book = new Epub(DOWNLODAD_URL)
       // 生成rendition
-      this.rendition = this.book.renderTo("read", {
+      this.rendition = this.book.renderTo('read', {
         width: window.innerWidth,
         height: window.innerHeight - 10
-      });
+      })
       // 生成rendition.display电子书
-      this.rendition.display();
-      this.themes = this.rendition.themes;
-      this.setFontSize(26);
+      this.rendition.display()
+      this.themes = this.rendition.themes
+      this.setFontSize(this.fontSize)
       this.book.ready
         .then(() => {
-          this.navigation = this.book.navigation;
-          // console.log(this.navigation)
+          this.navigation = this.book.navigation
+          return this.book.locations.generate()
         })
         .then(result => {
+          this.locations = this.book.locations
+
+          this.onLocationChange(1407)
+          console.log(this.book)
+          this.total = this.locations.total
           // this.locations = this.book.locations
           // this.bookAvailable = true
-        });
+          console.log(this.book.pageList.cfiFromPage(2))
+        })
     },
-    nextPage() {
+    nextPage () {
       if (this.rendition) {
-        this.rendition.next();
+        this.rendition.next()
       }
     },
-    prevPage() {
+    // 目录跳转
+    jumpTo (href) {
+      this.rendition.display(href)
+      this.closeAllTable()
+    },
+    // 关闭所有蒙版
+    closeAllTable () {
+      this.onClose()
+      this.toggleTitle()
+    },
+    prevPage () {
       if (this.rendition) {
-        this.rendition.prev();
+        this.rendition.prev()
       }
     },
     // 切换标题显示
-    toggleTitle() {
-      this.ifTitleShow = !this.ifTitleShow;
+    toggleTitle () {
+      this.ifTitleShow = !this.ifTitleShow
     },
-    // 切换字号
-    setFontSize(size) {
-      if (this.themes) {
-        this.themes.fontSize(size + "px");
+    // 改变字体
+    changeFontSize (status) {
+      if (status === 0) {
+        if (this.fontSize > 12) {
+          // 最小设置字号为12
+          this.fontSize = this.fontSize - 2
+          this.setFontSize(this.fontSize)
+        }
+      } else {
+        if (this.fontSize < 24) {
+          // 最小设置字号为24
+          this.fontSize = this.fontSize + 2
+          this.setFontSize(this.fontSize)
+        }
       }
     },
-    showDrawer() {
-      this.visible = true;
+    // 切换字号
+    setFontSize (size) {
+      if (this.themes) {
+        this.themes.fontSize(size + 'px')
+      }
     },
-    onClose() {
-      this.visible = false;
+    // 弹出或关闭修改字号菜单
+    changeWordSize () {},
+    showDrawer () {
+      this.visible = true
+    },
+    onClose () {
+      this.visible = false
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -170,16 +243,24 @@ export default {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 35px;
+    height: 70px;
     z-index: 101;
     background: white;
     display: flex;
+    justify-content: center;
     box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.25);
+    .code-box-demo .ant-slider {
+      margin-bottom: 16px;
+    }
     .left {
       flex: 0 0 60px;
       width: 35px;
       line-height: 35px;
       text-align: center;
+    }
+    .fontType {
+      display: flex;
+      flex-direction: column;
     }
     .right {
       flex: 1;
@@ -208,7 +289,7 @@ export default {
       vertical-align: -0.15em;
       fill: currentColor;
       overflow: hidden;
-      color:#E58308;
+      color: #e58308;
       font-size: 25px;
     }
   }
