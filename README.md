@@ -1,6 +1,6 @@
-# reader
+# Nreader
 
-> An electron-vue project
+> epub 阅读器
 
 #### Build Setup
 
