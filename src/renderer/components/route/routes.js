@@ -5,14 +5,14 @@ import landingPage from "../LandingPage"
 Vue.use(VueRouter)
 
 const routes = [
-    {
-        path: 'mainPage',
-        name: 'mainPage',
-        redirect: landingPage
-    },
-    {
-        path: '*', redirect: '/'
-    }
+    // {
+    //     path: 'mainPage',
+    //     name: 'mainPage',
+    //     redirect: landingPage
+    // },
+    // {
+    //     path: '*', redirect: '/'
+    // }
 ];
 
 export default routes;

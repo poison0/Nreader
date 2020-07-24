@@ -88,7 +88,7 @@ export default {
     }
   },
   mounted () {
-    // this.showEpub()
+    this.showEpub()
   },
   methods: {
     newPage(){

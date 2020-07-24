@@ -60,11 +60,11 @@
     </div>
 </template>
 <script>
-    import Epub from "epubjs";
+    import epub from "epubjs";
     import {isMeta, setMeta, getAllMeta, createBooks} from "../util/operDb";
     import {copyFile} from "../util/operFile";
     const {dialog} = require('electron').remote;
-    const BrowserWindow = require('electron').remote.BrowserWindow;
+    // const BrowserWindow = require('electron').remote.BrowserWindow;
 
     global.Epub = Epub
     export default {
@@ -94,28 +94,25 @@
             getBook() {
                 dialog.showOpenDialog(
                     {title: "book", filters: [{name: 'epub', extensions: ['epub', 'EPUB']}]
-                    },(bookInfo)=>{
+                    }).then((bookInfo)=>{
+                    // 生成book
+                    let book = new epub(bookInfo.filePaths[0]);
+                    book.loaded.metadata.then(result=>{
                         console.log(bookInfo)
-                        // 生成book
-                        let book = new Epub(bookInfo[0]);
-                        console.log(book)
-                        book.loaded.metadata.then(result=>{
-                            console.log(bookInfo)
-                            let path = "./books/"+result.identifier+".epub";
-                            copyFile(bookInfo[0],path,(res)=>{
-                                console.log(111)
-                                console.log(res)
-                            })
-                            if (!isMeta(result.identifier)) {
-                                this.getCoverURL(book,(res)=>{
-                                    setMeta(result,res,path);
-                                    this.getAllBookInfo();
-                                });
-                            }else{
-                                this.openNotification(result.title)
-                            }
+                        let path = "./books/"+result.identifier+".epub";
+                        copyFile(bookInfo.filePaths[0],path,(res)=>{
+                            console.log(res)
                         })
+                        if (!isMeta(result.identifier)) {
+                            this.getCoverURL(book,(res)=>{
+                                setMeta(result,res,path);
+                                this.getAllBookInfo();
+                            });
+                        }else{
+                            this.openNotification(result.title)
+                        }
                     })
+                })
             },
             //提示
             openNotification(placement) {
@@ -128,20 +125,23 @@
             },
             openBook(){
                 // alert(global.__static)
-                const winURL = process.env.NODE_ENV === 'development'
-                    ? `http://localhost:9080`
-                    : `file://${__dirname}/index.html`
-                let win = new BrowserWindow({
-                    height: 700,
-                    useContentSize: true,
-                    width: 1000,
-                    minWidth:600,
-                    webPreferences:{webSecurity: false}
-                })
-                win.loadURL("http://localhost:9080/#/mainPage")
-                win.on('closed', () => {
-                    win = null
-                })
+                // const winURL = process.env.NODE_ENV === 'development'
+                //     ? `http://localhost:9080`
+                //     : `file://${__dirname}/index.html`
+                // let win = new BrowserWindow({
+                //     height: 700,
+                //     useContentSize: true,
+                //     width: 1000,
+                //     minWidth:600,
+                //     webPreferences:{
+                //         nodeIntegration: true,
+                //         webSecurity: false
+                //     }
+                // })
+                // win.loadURL("http://localhost:9080/#/mainPage")
+                // win.on('closed', () => {
+                //     win = null
+                // })
 
             },
             //获取图片

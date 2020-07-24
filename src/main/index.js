@@ -22,7 +22,10 @@ function createWindow () {
     useContentSize: true,
     width: 1000,
     minWidth:600,
-    webPreferences:{webSecurity: false}
+    webPreferences:{
+      webSecurity: false,
+      nodeIntegration: true,
+    }
   })
 
   mainWindow.loadURL(winURL)
@@ -31,6 +34,7 @@ function createWindow () {
     mainWindow = null
   })
 }
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 
 app.on('ready', createWindow)
 
