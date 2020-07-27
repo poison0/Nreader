@@ -1,15 +1,12 @@
-import Vue from 'vue';
-import VueRouter from "vue-router";
-import landingPage from "../LandingPage"
+import landingPage from "../../newPage/index/LandingPage"
 
-Vue.use(VueRouter)
 
 const routes = [
-    // {
-    //     path: 'mainPage',
-    //     name: 'mainPage',
-    //     redirect: landingPage
-    // },
+    {
+        path: '/newPage',
+        name: 'newPage',
+        redirect: landingPage
+    }
     // {
     //     path: '*', redirect: '/'
     // }

@@ -38,6 +38,9 @@ app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 
 app.on('ready', createWindow)
 
+// 引入newPage.js，负责悬浮窗口内主进程和渲染进程之间的通信
+require('./newPage');
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()

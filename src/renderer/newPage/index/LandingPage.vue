@@ -64,15 +64,15 @@
 </template>
 
 <script>
-import SystemInformation from './LandingPage/SystemInformation'
+import SystemInformation from '../../components/LandingPage/SystemInformation'
 import Epub from 'epubjs'
-import indexMode from './indexMode'
+import indexMode from '../../components/indexMode'
 const DOWNLODAD_URL = 'src/renderer/components/book/jxyz.epub'
 const remote = require('electron').remote;
 const BrowserWindow = remote.BrowserWindow;
 global.Epub = Epub
 export default {
-  name: 'landing-page',
+  name: 'newPage',
   components: { SystemInformation, indexMode },
   data () {
     return {
@@ -198,7 +198,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/styles/global";
+@import "src/renderer/assets/styles/global";
 .wrapper {
   position: absolute;
   .title-wrapper {

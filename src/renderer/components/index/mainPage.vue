@@ -60,11 +60,12 @@
     </div>
 </template>
 <script>
-    import epub from "epubjs";
+    import Epub from "epubjs";
     import {isMeta, setMeta, getAllMeta, createBooks} from "../util/operDb";
     import {copyFile} from "../util/operFile";
     const {dialog} = require('electron').remote;
-    // const BrowserWindow = require('electron').remote.BrowserWindow;
+    const {ipcRenderer} = require('electron');
+    const BrowserWindow = require('electron').remote.BrowserWindow;
 
     global.Epub = Epub
     export default {
@@ -96,7 +97,7 @@
                     {title: "book", filters: [{name: 'epub', extensions: ['epub', 'EPUB']}]
                     }).then((bookInfo)=>{
                     // 生成book
-                    let book = new epub(bookInfo.filePaths[0]);
+                    let book = new Epub(bookInfo.filePaths[0]);
                     book.loaded.metadata.then(result=>{
                         console.log(bookInfo)
                         let path = "./books/"+result.identifier+".epub";
@@ -124,7 +125,7 @@
                 });
             },
             openBook(){
-                // alert(global.__static)
+                ipcRenderer.send('showNewPageWindow');
                 // const winURL = process.env.NODE_ENV === 'development'
                 //     ? `http://localhost:9080`
                 //     : `file://${__dirname}/index.html`
@@ -138,7 +139,7 @@
                 //         webSecurity: false
                 //     }
                 // })
-                // win.loadURL("http://localhost:9080/#/mainPage")
+                // win.loadURL(winURL+"#/landingPage")
                 // win.on('closed', () => {
                 //     win = null
                 // })
