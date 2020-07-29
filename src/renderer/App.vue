@@ -1,16 +1,15 @@
 <template>
   <div id="app">
 <!--    <landing-page></landing-page>-->
-     <Main-page></Main-page>
+      <router-view ></router-view>
+<!--     <Main-page />-->
   </div>
 </template>
 
 <script>
-  import MainPage from '@/components/index/mainPage'
   export default {
     name: 'nreader',
     components: {
-      MainPage,
       // LandingPage
     },
     mounted () {

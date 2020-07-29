@@ -4,18 +4,19 @@ import Antd from 'ant-design-vue'
 import VueRouter from 'vue-router'
 import 'ant-design-vue/dist/antd.css'
 import './assets/styles/global.scss'
-import './newPage/icon/iconfont.js'
+import './components/icon/iconfont.js'
 import Routes from './components/route/routes'
-
-Vue.config.productionTip = false
+const router = new VueRouter({
+  routes: Routes,
+})
+Vue.config.productionTip = false;
+// 全局注册 <router-view>   和 <router-link>
 Vue.use(VueRouter)
 Vue.use(Antd)
 /* eslint-disable no-new */
-const router = new VueRouter({
-  routes:Routes,
-})
+
 new Vue({
   components: { App },
   template: '<App/>',
-  router:router
+  router
 }).$mount('#app')

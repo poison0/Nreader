@@ -2,7 +2,7 @@
 import { BrowserWindow, ipcMain, screen } from 'electron';
 
 let win = null;
-const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080/#/newPage' : `file://${__dirname}/newPage/index.html`;
+const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080/#reader' : `file://${__dirname}/newPage/index.html`;
 
 /**
  * 创建新窗口函数
@@ -13,14 +13,11 @@ function createNewPageWindow() {
     height: 700,
     minWidth: 500,
     minHeight: 130,
-    movable: true, // 窗口是否可以移动
     show: false, // 先不让窗口显示
     webPreferences: {
-      // devTools: true, // 关闭调试工具
       webSecurity: false,
       nodeIntegration: true,
     },
-    useContentSize: true,
   });
   const size = screen.getPrimaryDisplay().workAreaSize; // 获取显示器的宽高
   const winSize = win.getSize(); // 获取窗口宽高

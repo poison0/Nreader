@@ -1,15 +1,17 @@
-import landingPage from "../../newPage/index/LandingPage"
-
+import Reader from "@/components/reader/reader";
+import MainPage from '@/components/index/mainPage'
 
 const routes = [
     {
-        path: '/newPage',
-        name: 'newPage',
-        redirect: landingPage
+        path: '/',
+        name: 'mainPage',
+        component: MainPage
+    },
+    {
+        path: '/reader',
+        name: 'reader',
+        component: Reader
     }
-    // {
-    //     path: '*', redirect: '/'
-    // }
 ];
 
 export default routes;

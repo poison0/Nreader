@@ -139,7 +139,7 @@
                 //         webSecurity: false
                 //     }
                 // })
-                // win.loadURL(winURL+"#/landingPage")
+                // win.loadURL(winURL+"#/newPage")
                 // win.on('closed', () => {
                 //     win = null
                 // })
