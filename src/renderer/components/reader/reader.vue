@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <a-drawer @close="onClose" width="220" placement="left" :closable="false" :visible="visible">
+        <a-drawer @close="onClose" width="270" placement="left" :closable="false" :visible="visible">
             <index-mode :navigation="navigation" :jumpTo="jumpTo"></index-mode>
         </a-drawer>
         <transition name="slide-down">
@@ -317,6 +317,9 @@
                     flex: 0 0 100px;
                 }
             }
+        }
+        .ant-drawer-body {
+            padding: 0;
         }
     }
 </style>

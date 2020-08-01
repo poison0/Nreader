@@ -238,7 +238,7 @@
                         .stripChecked {
                             flex-shrink: 0;
                             /*background-color: #0088FE;*/
-                            background-color: #1049A9;
+                            background-color: #2F89DF;
                         }
 
                         &:hover {
@@ -366,7 +366,7 @@
                             }
 
                             &:hover{
-                                border:3px solid #1049A9;
+                                border:3px solid #2F89DF;
                             }
 
                         }

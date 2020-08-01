@@ -1,8 +1,8 @@
 <template>
   <div class="indexModel">
-    <ul v-for="(item) in this.navigation.toc" :key="item.id" class="index">
+    <ul v-for="(item) in this.navigation.toc" :key="item.id" class="index" :title="item.label">
       <div class="firstItem"  @click="jump(item.href)">{{item.label}}</div>
-      <ul v-for="(s) in item.subitems" :key="s.id" class="item">
+      <ul v-for="(s) in item.subitems" :key="s.id" class="item" :title="s.label">
         <div class="secondItem" @click="jump(s.href)">{{s.label}}</div>
       </ul>
     </ul>
@@ -37,20 +37,33 @@ export default {
 </script>
 <style lang="scss" scoped>
 .indexModel {
+  font-family: "微软雅黑";
   .ant-drawer-body {
     padding: 0;
   }
   .firstItem{
+    width: 200px;
+    height: 30px;
+    line-height: 30px;
     cursor: pointer;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    display: block;
   }
   .firstItem:hover{
-      color: blue;
+    color: #FFA400;
   }
+
   .secondItem{
     cursor: pointer;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    display: block;
   }
   .secondItem:hover{
-      color: blue;
+      color: #FFA400;
   }
   .index {
     font-size: 16px;
@@ -59,9 +72,14 @@ export default {
   .item {
     font-size: 14px;
     font-weight: normal;
-    width: 100px;
+    width: 200px;
+    height: 30px;
+    line-height: 30px;
     white-space: nowrap;
     margin-left: 10px;
+    /*&:hover{*/
+    /*  background-color: #F5F5F5;*/
+    /*}*/
   }
 }
 </style>
