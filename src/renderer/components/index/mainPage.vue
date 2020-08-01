@@ -48,7 +48,7 @@
                 </div>
                 <div class="-right-content-book">
                     <div class="-book-item" v-for="book in books">
-                        <a-card-grid class="-book-pic" @click="openBook">
+                        <a-card-grid class="-book-pic" @click="openBook(book)">
                             <div class="info"></div>
                             <img :src="book.url" width="180" />
                         </a-card-grid>
@@ -124,26 +124,8 @@
                     placement:'bottomRight'
                 });
             },
-            openBook(){
-                ipcRenderer.send('showNewPageWindow');
-                // const winURL = process.env.NODE_ENV === 'development'
-                //     ? `http://localhost:9080`
-                //     : `file://${__dirname}/index.html`
-                // let win = new BrowserWindow({
-                //     height: 700,
-                //     useContentSize: true,
-                //     width: 1000,
-                //     minWidth:600,
-                //     webPreferences:{
-                //         nodeIntegration: true,
-                //         webSecurity: false
-                //     }
-                // })
-                // win.loadURL(winURL+"#/newPage")
-                // win.on('closed', () => {
-                //     win = null
-                // })
-
+            openBook(book){
+                ipcRenderer.send('showNewPageWindow', JSON.stringify(book));
             },
             //获取图片
             getCoverURL(book, callback) {
@@ -188,15 +170,15 @@
             width: 100%;
             height: 40px;
             background-color: #ffffff;
-            /*background-color: #F88A00;*/
+            /*background-color: #FFA400;*/
             box-shadow: 0 0 4px #999999;
             position: relative;
             z-index: 100;
 
             .title {
-                color: #F88A00;
+                color: #FFA400;
                 /*color: #ffffff;*/
-                /*color: #F88A00;*/
+                /*color: #FFA400;*/
                 font-family: Calibri, "Times New Roman", serif;
                 font-size: 20px;
                 font-weight: bolder;
@@ -256,7 +238,7 @@
                         .stripChecked {
                             flex-shrink: 0;
                             /*background-color: #0088FE;*/
-                            background-color: #F88A00;
+                            background-color: #1049A9;
                         }
 
                         &:hover {
@@ -299,7 +281,7 @@
                     justify-content: space-between;
                     height: 40px;
                     background-color: #EFEFEF;
-                    /*background-color: #F88A00;*/
+                    /*background-color: #FFA400;*/
                     border-bottom: 1px solid #E4E4E4;
                     box-shadow: 0 0 2px #999999;
                     position: relative;
@@ -331,7 +313,7 @@
                     /*margin-top: 10px;*/
                     margin-bottom: 10px;
                     background-color: #ffffff;
-                    /*box-shadow: 0 0 4px #F88A00;*/
+                    /*box-shadow: 0 0 4px #FFA400;*/
                     .-book-item {
                         display: flex;
                         flex-direction: column;
@@ -384,34 +366,16 @@
                             }
 
                             &:hover{
-                                border:3px solid #F88A00;
+                                border:3px solid #1049A9;
                             }
 
                         }
                     }
                 }
-                ::-webkit-scrollbar {
-                    width: 7px; /*滚动条宽度*/
-                    height: 2px;  /*滚动条高度*/
-                }
-
-                /*定义滚动条轨道 内阴影+圆角*/
-                ::-webkit-scrollbar-track {
-                    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
-                    border-radius: 10px;  /*滚动条的背景区域的圆角*/
-                    background-color: #ffffff;/*滚动条的背景颜色*/
-                }
-
-                /*定义滑块 内阴影+圆角*/
-                ::-webkit-scrollbar-thumb {
-                    border-radius: 99px; /*滚动条的圆角*/
-                    /*-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);*/
-                    background-color: #D6D6D4;  /*滚动条的背景颜色*/
-                }
             }
         }
         .ant-input:focus{
-            background-color: #F88A00;
+            background-color: #FFA400;
         }
         .ant-card-grid{
             padding: 0;
@@ -420,8 +384,8 @@
             line-height: 45px;
         }
         .ant-btn-primary{
-            background-color: #F88A00;
-            border-color:#F88A00;
+            background-color: #FFA400;
+            border-color:#FFA400;
         }
     }
 

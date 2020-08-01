@@ -64,11 +64,12 @@
 </template>
 
 <script>
-    import SystemInformation from '../../components/LandingPage/SystemInformation'
+    import SystemInformation from '../landingPage/SystemInformation'
     import Epub from 'epubjs'
     import indexMode from './indexMode'
     const DOWNLODAD_URL = 'src/renderer/components/book/jxyz.epub'
     const remote = require('electron').remote;
+    const ipcRenderer = require('electron').ipcRenderer;
     const BrowserWindow = remote.BrowserWindow;
     global.Epub = Epub
     export default {
@@ -88,7 +89,11 @@
             }
         },
         mounted () {
-            this.showEpub()
+            let self = this
+            ipcRenderer.on('ping', function(event, arg) {
+                self.showEpub(JSON.parse(arg).path);
+            });
+
         },
         methods: {
             newPage(){
@@ -111,9 +116,9 @@
                 message.info('Clicked on Yes.')
             },
             // 电子书解析渲染
-            showEpub () {
+            showEpub (path) {
                 // 生成book
-                this.book = new Epub(DOWNLODAD_URL)
+                this.book = new Epub(path)
                 // 生成rendition
                 this.rendition = this.book.renderTo('read', {
                     width: window.innerWidth,
@@ -131,12 +136,12 @@
                     .then(result => {
                         this.locations = this.book.locations
 
-                        this.onLocationChange(1407)
-                        console.log(this.book)
-                        this.total = this.locations.total
-                        // this.locations = this.book.locations
-                        // this.bookAvailable = true
-                        console.log(this.book.pageList.cfiFromPage(2))
+                        // this.onLocationChange(1407)
+                        // console.log(this.book)
+                        // this.total = this.locations.total
+                        // // this.locations = this.book.locations
+                        // // this.bookAvailable = true
+                        // console.log(this.book.pageList.cfiFromPage(2))
                     })
             },
             nextPage () {

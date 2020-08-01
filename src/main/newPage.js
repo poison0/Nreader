@@ -2,12 +2,12 @@
 import { BrowserWindow, ipcMain, screen } from 'electron';
 
 let win = null;
-const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080/#reader' : `file://${__dirname}/newPage/index.html`;
+const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080/#reader' : `file://${__dirname}/reader/index.html`;
 
 /**
  * 创建新窗口函数
  */
-function createNewPageWindow() {
+function createNewPageWindow(book) {
   win = new BrowserWindow({
     width: 900,
     height: 700,
@@ -19,6 +19,11 @@ function createNewPageWindow() {
       nodeIntegration: true,
     },
   });
+
+  win.webContents.on('did-finish-load', function() {
+    win.webContents.send('ping', book);
+  });
+
   const size = screen.getPrimaryDisplay().workAreaSize; // 获取显示器的宽高
   const winSize = win.getSize(); // 获取窗口宽高
   // 设置窗口的位置 注意x轴要桌面的宽度 - 窗口的宽度
@@ -41,15 +46,15 @@ function createNewPageWindow() {
 /**
  * 监听创建新窗口
  */
-ipcMain.on('showNewPageWindow', () => {
+ipcMain.on('showNewPageWindow', (args,book) => {
   if (win) {
     if (win.isVisible()) {
-      createNewPageWindow();
+      createNewPageWindow(book);
     } else {
       win.showInactive();
     }
   } else {
-    createNewPageWindow();
+    createNewPageWindow(book);
   }
 });
 
