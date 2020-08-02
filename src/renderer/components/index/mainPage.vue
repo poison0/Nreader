@@ -197,6 +197,7 @@
 
             .-left-content {
                 width: 20%;
+                max-width: 200px;
                 height: 100%;
                 border-right: 1px solid #E4E4E4;
                 /*box-shadow: 0 0 4px #999999;*/
@@ -268,7 +269,7 @@
             }
 
             .-right-content {
-                width: 80%;
+                min-width: 80%;
                 height: 100%;
                 display: flex;
                 flex-direction: column;

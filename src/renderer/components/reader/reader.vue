@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <a-drawer @close="onClose" width="270" placement="left" :closable="false" :visible="visible">
+        <a-drawer @close="onClose" width="300" placement="left" :closable="false" :visible="visible">
             <index-mode :navigation="navigation" :jumpTo="jumpTo"></index-mode>
         </a-drawer>
         <transition name="slide-down">
@@ -23,40 +23,47 @@
         </div>
         <transition name="slide-down">
             <div class="boot-wrapper" v-show="ifTitleShow">
-                <div style="width:600px">
-                    <a-slider id="test" :defaultValue="30" :max="total" :min="0" @change="onLocationChange" :step="3" />
+                <div class="boot-wrapper-top">
+                    <div class="chapter">上一章</div>
+                    <div style="width:600px;margin-top:5px">
+                        <a-slider id="test" :defaultValue="30" :max="total" :min="0" @change="onLocationChange"
+                                  :step="3"/>
+                    </div>
+                    <div class="chapter">下一章</div>
                 </div>
-                <div>
-                    <svg @click="showDrawer" class="icon left" aria-hidden="true">
-                        <use xlink:href="#icon-mulu" />
-                    </svg>
-                </div>
-                <div>
-                    <a-popover trigger="click">
-                        <template slot="content">
-                            <div class="fontType">
-                                <div style="margin:10px">
-                                    字号
-                                    <a-button-group>
-                                        <a-button @click="changeFontSize(0)">
-                                            <a-icon type="left" />
-                                        </a-button>
-                                        <a-button @click="changeFontSize(1)">
-                                            <a-icon type="right" />
-                                        </a-button>
-                                    </a-button-group>
+                <div class="boot-wrapper-bottom">
+                    <div>
+                        <svg @click="showDrawer" class="icon left" aria-hidden="true">
+                            <use xlink:href="#icon-mulu"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <a-popover trigger="click">
+                            <template slot="content">
+                                <div class="fontType">
+                                    <div style="margin:10px">
+                                        字号
+                                        <a-button-group>
+                                            <a-button @click="changeFontSize(0)">
+                                                <a-icon type="left"/>
+                                            </a-button>
+                                            <a-button @click="changeFontSize(1)">
+                                                <a-icon type="right"/>
+                                            </a-button>
+                                        </a-button-group>
+                                    </div>
+                                    <div style="margin:10px">
+                                        字体
+                                        <a-button-group>
+                                            <a-button>简体</a-button>
+                                            <a-button>繁体</a-button>
+                                        </a-button-group>
+                                    </div>
                                 </div>
-                                <div style="margin:10px">
-                                    字体
-                                    <a-button-group>
-                                        <a-button>简体</a-button>
-                                        <a-button>繁体</a-button>
-                                    </a-button-group>
-                                </div>
-                            </div>
-                        </template>
-                        <div>Aa</div>
-                    </a-popover>
+                            </template>
+                            <div>Aa</div>
+                        </a-popover>
+                    </div>
                 </div>
             </div>
         </transition>
@@ -67,15 +74,15 @@
     import SystemInformation from '../landingPage/SystemInformation'
     import Epub from 'epubjs'
     import indexMode from './indexMode'
-    const DOWNLODAD_URL = 'src/renderer/components/book/jxyz.epub'
+
     const remote = require('electron').remote;
     const ipcRenderer = require('electron').ipcRenderer;
     const BrowserWindow = remote.BrowserWindow;
     global.Epub = Epub
     export default {
         name: 'reader',
-        components: { SystemInformation, indexMode },
-        data () {
+        components: {SystemInformation, indexMode},
+        data() {
             return {
                 total: 0,
                 ifTitleShow: false,
@@ -84,39 +91,39 @@
                 text: 'Are you sure to delete this task?',
                 navigation: {},
                 isShowAa: false,
-                fontSize: 24,
+                fontSize: 14,
                 locations: {}// 定位
             }
         },
-        mounted () {
+        mounted() {
             let self = this
-            ipcRenderer.on('ping', function(event, arg) {
+            ipcRenderer.on('ping', function (event, arg) {
                 self.showEpub(JSON.parse(arg).path);
             });
 
         },
         methods: {
-            newPage(){
-                let win = new BrowserWindow({ width: 800, height: 600 });
-                win.loadURL('https://github.com');
-                win.on("closed",()=>{
+            newPage() {
+                let win = new BrowserWindow({width: 800, height: 600});
+                win.loadURL('http://r.qq.com');
+                win.on("closed", () => {
                     win = null;
                 })
             },
-            onLocationChange (index) {
+            onLocationChange(index) {
                 this.rendition.display(this.locations.cfiFromLocation(index))
             },
-            handleChange (value) {
+            handleChange(value) {
                 console.log(`selected ${value}`)
             },
-            showAd () {
+            showAd() {
                 this.isShowAa = !this.isShowAa
             },
-            confirm () {
+            confirm() {
                 message.info('Clicked on Yes.')
             },
             // 电子书解析渲染
-            showEpub (path) {
+            showEpub(path) {
                 // 生成book
                 this.book = new Epub(path)
                 // 生成rendition
@@ -138,38 +145,39 @@
 
                         // this.onLocationChange(1407)
                         // console.log(this.book)
-                        // this.total = this.locations.total
-                        // // this.locations = this.book.locations
-                        // // this.bookAvailable = true
+                        this.total = this.locations.total
+                        // this.locations = this.book.locations
+                        // this.bookAvailable = true
                         // console.log(this.book.pageList.cfiFromPage(2))
                     })
             },
-            nextPage () {
+            nextPage() {
                 if (this.rendition) {
                     this.rendition.next()
                 }
             },
             // 目录跳转
-            jumpTo (href) {
-                this.rendition.display(href)
-                this.closeAllTable()
+            jumpTo(href) {
+                this.rendition.display(href).then(res => {
+                    this.closeAllTable()
+                })
             },
             // 关闭所有蒙版
-            closeAllTable () {
+            closeAllTable() {
                 this.onClose()
                 this.toggleTitle()
             },
-            prevPage () {
+            prevPage() {
                 if (this.rendition) {
                     this.rendition.prev()
                 }
             },
             // 切换标题显示
-            toggleTitle () {
+            toggleTitle() {
                 this.ifTitleShow = !this.ifTitleShow
             },
             // 改变字体
-            changeFontSize (status) {
+            changeFontSize(status) {
                 if (status === 0) {
                     if (this.fontSize > 12) {
                         // 最小设置字号为12
@@ -185,17 +193,18 @@
                 }
             },
             // 切换字号
-            setFontSize (size) {
+            setFontSize(size) {
                 if (this.themes) {
                     this.themes.fontSize(size + 'px')
                 }
             },
             // 弹出或关闭修改字号菜单
-            changeWordSize () {},
-            showDrawer () {
+            changeWordSize() {
+            },
+            showDrawer() {
                 this.visible = true
             },
-            onClose () {
+            onClose() {
                 this.visible = false
             }
         }
@@ -204,8 +213,10 @@
 
 <style lang="scss" scoped>
     @import "src/renderer/assets/styles/global";
+
     .wrapper {
         position: absolute;
+
         .title-wrapper {
             position: absolute;
             top: 0;
@@ -216,16 +227,19 @@
             background: white;
             display: flex;
             box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
             .left {
                 flex: 0 0 60px;
                 width: 35px;
                 line-height: 35px;
                 text-align: center;
             }
+
             .right {
                 flex: 1;
                 display: flex;
                 justify-content: flex-end;
+
                 .icon-wrapper {
                     width: 35px;
                     text-align: center;
@@ -233,16 +247,20 @@
                     flex: 0 0 40px;
                 }
             }
+
             &.slide-down-enter {
                 transform: translate3d(0, -100%, 0);
             }
+
             &.slide-down-enter-to {
                 transform: translate3d(0, 0, 0);
             }
+
             &.slide-down-enter-active {
                 transition: all 0.3s linear;
             }
         }
+
         .boot-wrapper {
             position: absolute;
             bottom: 0;
@@ -253,24 +271,51 @@
             background: white;
             display: flex;
             justify-content: center;
+            flex-direction: column;
             box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.25);
+            .boot-wrapper-top{
+                width: 100%;
+                height: 40px;
+                display: flex;
+                padding-top: 10px;
+                justify-content: center;
+                align-items: center;
+                .chapter{
+                    font-weight: bold;
+                    cursor:pointer;
+                    margin-right: 20px;
+                    margin-left: 20px;
+                }
+            }
+            .boot-wrapper-bottom{
+                width: 100%;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
             .code-box-demo .ant-slider {
                 margin-bottom: 16px;
             }
+
             .left {
                 flex: 0 0 60px;
                 width: 35px;
                 line-height: 35px;
                 text-align: center;
             }
+
             .fontType {
                 display: flex;
                 flex-direction: column;
             }
+
             .right {
                 flex: 1;
                 display: flex;
                 justify-content: flex-end;
+
                 .icon-wrapper {
                     cursor: pointer;
                     width: 35px;
@@ -279,15 +324,19 @@
                     flex: 0 0 40px;
                 }
             }
+
             &.slide-down-enter {
                 transform: translate3d(0, -100%, 0);
             }
+
             &.slide-down-enter-to {
                 transform: translate3d(0, 0, 0);
             }
+
             &.slide-down-enter-active {
                 transition: all 0.3s linear;
             }
+
             .icon {
                 width: 1em;
                 height: 1em;
@@ -298,6 +347,7 @@
                 font-size: 25px;
             }
         }
+
         .read-wrapper {
             .mask {
                 position: absolute;
@@ -307,17 +357,21 @@
                 display: flex;
                 height: 100%;
                 z-index: 100;
+
                 .left {
                     flex: 0 0 100px;
                 }
+
                 .center {
                     flex: 1;
                 }
+
                 .right {
                     flex: 0 0 100px;
                 }
             }
         }
+
         .ant-drawer-body {
             padding: 0;
         }
