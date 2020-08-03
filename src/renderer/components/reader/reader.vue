@@ -27,8 +27,13 @@
                 <div class="right" @click="nextPage"></div>
             </div>
         </div>
-        <transition name="slide-down" style="z-index: 11">
-            <div class="boot-wrapper" v-show="ifTitleShow">
+
+        <div :class="{
+              'boot-wrapper': true,
+              'fade-in': ifTitleShow,
+              'fade-out': !ifTitleShow
+            }"
+        >
                 <div class="boot-wrapper-top">
                     <div class="chapter-font" >14/35</div>
                     <div class="svg-icon">
@@ -78,13 +83,13 @@
 <!--                    </div>-->
 <!--                </div>-->
             </div>
-        </transition>
     </div>
 </template>
 
 <script>
     import SystemInformation from '../landingPage/SystemInformation'
     import Epub from 'epubjs'
+    import classNames from 'classnames';
     import indexMode from './indexMode'
 
     const remote = require('electron').remote;
@@ -319,7 +324,7 @@
         }
 
         .boot-wrapper {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
