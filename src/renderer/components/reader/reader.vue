@@ -1,24 +1,34 @@
 <template>
     <div class="wrapper">
-        <a-drawer @close="onClose" width="300" placement="left" :closable="false" :visible="visible" >
+        <a-drawer @close="onClose" width="300" placement="left" :closable="false" :visible="visible">
             <index-mode :navigation="navigation" :jumpTo="jumpTo"></index-mode>
         </a-drawer>
-        <transition name="slide-down">
-            <div class="title-wrapper" v-show="ifTitleShow">
-                <div class="title">NReader</div>
-                <div class="right">
-                   <div class="vertical-line">|</div>
-                   <div class="color-title">颜色</div>
-                   <div class="show-color white"/>
-                   <div class="show-color yellow"/>
-                   <div class="show-color green"/>
-                   <div class="show-color gray"/>
-                   <div class="show-color dark"/>
-                   <div class="vertical-line">|</div>
-                   <div class="show-font-size">字号</div>
+        <div :class="{
+              'title-wrapper': true,
+              'fade-in-top': ifTitleShow,
+              'fade-out-top': !ifTitleShow
+            }"
+        >
+            <div class="title">NReader</div>
+            <div class="right">
+                <div class="vertical-line">|</div>
+                <div class="color-title">颜色</div>
+                <div class="show-color white"/>
+                <div class="show-color yellow"/>
+                <div class="show-color green"/>
+                <div class="show-color gray"/>
+                <div class="show-color dark"/>
+                <div class="vertical-line">|</div>
+                <div class="show-font-size">字号</div>
+                <div class="plus">
+                    <a-icon type="plus-circle"/>
+                </div>
+                <div class="font-size">16</div>
+                <div class="plus">
+                    <a-icon type="plus-circle"/>
                 </div>
             </div>
-        </transition>
+        </div>
         <div class="read-wrapper">
             <div id="read"></div>
             <div class="mask">
@@ -30,59 +40,63 @@
 
         <div :class="{
               'boot-wrapper': true,
-              'fade-in': ifTitleShow,
-              'fade-out': !ifTitleShow
+              'fade-in-bottom': ifTitleShow,
+              'fade-out-bottom': !ifTitleShow
             }"
         >
-                <div class="boot-wrapper-top">
-                    <div class="chapter-font" >14/35</div>
-                    <div class="svg-icon">
-                        <svg @click="showDrawer" class="icon left" aria-hidden="true" >
-                            <use xlink:href="#icon-mulu" />
-                        </svg>
-                    </div>
-                    <div class="chapter"><a-icon type="step-backward" title="上一章"/></div>
-                    <div style="width:600px;margin-top:5px">
-                        <a-slider id="test" :defaultValue="30" :max="total" :min="0" @change="onLocationChange"
-                                  :step="3"/>
-                    </div>
-                    <div class="chapter"><a-icon type="step-forward" title="下一章"/></div>
+            <div class="boot-wrapper-top">
+                <div class="chapter-font">14/35</div>
+                <div class="svg-icon">
+                    <svg @click="showDrawer" class="icon left" aria-hidden="true">
+                        <use xlink:href="#icon-mulu"/>
+                    </svg>
                 </div>
-<!--                <div class="boot-wrapper-bottom">-->
-<!--                    <div>-->
-<!--                        <svg @click="showDrawer" class="icon left" aria-hidden="true">-->
-<!--                            <use xlink:href="#icon-mulu"/>-->
-<!--                        </svg>-->
-<!--                    </div>-->
-<!--                    <div>-->
-<!--                        <a-popover trigger="click">-->
-<!--                            <template slot="content">-->
-<!--                                <div class="fontType">-->
-<!--                                    <div style="margin:10px">-->
-<!--                                        字号-->
-<!--                                        <a-button-group>-->
-<!--                                            <a-button @click="changeFontSize(0)">-->
-<!--                                                <a-icon type="left"/>-->
-<!--                                            </a-button>-->
-<!--                                            <a-button @click="changeFontSize(1)">-->
-<!--                                                <a-icon type="right"/>-->
-<!--                                            </a-button>-->
-<!--                                        </a-button-group>-->
-<!--                                    </div>-->
-<!--                                    <div style="margin:10px">-->
-<!--                                        字体-->
-<!--                                        <a-button-group>-->
-<!--                                            <a-button>简体</a-button>-->
-<!--                                            <a-button>繁体</a-button>-->
-<!--                                        </a-button-group>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </template>-->
-<!--                            <div>Aa</div>-->
-<!--                        </a-popover>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div class="chapter">
+                    <a-icon type="step-backward" title="上一章"/>
+                </div>
+                <div style="width:600px;margin-top:5px">
+                    <a-slider id="test" :defaultValue="30" :max="total" :min="0" @change="onLocationChange"
+                              :step="3"/>
+                </div>
+                <div class="chapter">
+                    <a-icon type="step-forward" title="下一章"/>
+                </div>
             </div>
+            <!--                <div class="boot-wrapper-bottom">-->
+            <!--                    <div>-->
+            <!--                        <svg @click="showDrawer" class="icon left" aria-hidden="true">-->
+            <!--                            <use xlink:href="#icon-mulu"/>-->
+            <!--                        </svg>-->
+            <!--                    </div>-->
+            <!--                    <div>-->
+            <!--                        <a-popover trigger="click">-->
+            <!--                            <template slot="content">-->
+            <!--                                <div class="fontType">-->
+            <!--                                    <div style="margin:10px">-->
+            <!--                                        字号-->
+            <!--                                        <a-button-group>-->
+            <!--                                            <a-button @click="changeFontSize(0)">-->
+            <!--                                                <a-icon type="left"/>-->
+            <!--                                            </a-button>-->
+            <!--                                            <a-button @click="changeFontSize(1)">-->
+            <!--                                                <a-icon type="right"/>-->
+            <!--                                            </a-button>-->
+            <!--                                        </a-button-group>-->
+            <!--                                    </div>-->
+            <!--                                    <div style="margin:10px">-->
+            <!--                                        字体-->
+            <!--                                        <a-button-group>-->
+            <!--                                            <a-button>简体</a-button>-->
+            <!--                                            <a-button>繁体</a-button>-->
+            <!--                                        </a-button-group>-->
+            <!--                                    </div>-->
+            <!--                                </div>-->
+            <!--                            </template>-->
+            <!--                            <div>Aa</div>-->
+            <!--                        </a-popover>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+        </div>
     </div>
 </template>
 
@@ -233,7 +247,8 @@
 
     .wrapper {
         position: absolute;
-        width:100%;
+        width: 100%;
+
         .title-wrapper {
             position: absolute;
             top: 0;
@@ -244,6 +259,7 @@
             background: white;
             display: flex;
             box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
             .title {
                 color: #FFA400;
                 font-family: Calibri, "Times New Roman", serif;
@@ -254,6 +270,7 @@
                 height: 35px;
                 line-height: 35px;
             }
+
             .left {
                 flex: 0 0 60px;
                 width: 30px;
@@ -262,7 +279,7 @@
             }
 
             .right {
-                color:#666666;
+                color: #666666;
                 display: flex;
                 flex-direction: row;
                 font-size: 13px;
@@ -273,37 +290,66 @@
                 height: 35px;
                 line-height: 35px;
                 align-items: center;
-                .vertical-line{
+
+                .vertical-line {
                     margin-right: 7px;
                     color: #DDDDDD;
                 }
-                .color-title{
+
+                .color-title {
                     margin-right: 10px;
                 }
-                .show-font-size{
+
+                .show-font-size {
                     margin-right: 5px;
                 }
-                .show-color{
+
+                .plus {
+                    color: #DDDDDD;
+                    cursor: pointer;
+                    margin-top: 4px;
+                    margin-left: 6px;
+                    transition: all 0.2s linear 0s;
+
+                    &:hover {
+                        color: #FFA400;
+                    }
+                }
+                .font-size{
+                    font-weight: normal;
+                    margin-left: 6px;
+                }
+
+                .show-color {
                     width: 16px;
                     height: 16px;
                     border-radius: 8px;
-                    border:1px solid #DDDDDD;
+                    border: 1px solid #DDDDDD;
                     margin-right: 10px;
                     cursor: pointer;
+                    transition: all 0.2s linear 0s;
+                    &:hover {
+                        border: 1px solid #FFA400;
+                    }
                 }
-                .white{
+
+                .white {
                     background-color: #FCFCFC;
                 }
-                .yellow{
+
+                .yellow {
                     background-color: #F9F4E9;
                 }
-                .green{
+
+                .green {
                     background-color: #CEEABA;
                 }
-                .gray{
+
+                .gray {
                     background-color: #6D6D6F;
                 }
-                .dark{
+
+                .dark {
                     background-color: #3B403C;
                 }
 
@@ -335,28 +381,33 @@
             justify-content: center;
             flex-direction: column;
             box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.25);
-            .boot-wrapper-top{
+
+            .boot-wrapper-top {
                 width: 100%;
                 height: 30px;
                 display: flex;
                 padding-top: 10px;
                 justify-content: center;
                 align-items: center;
-                .chapter-font{
-                    font-size:15px;
+
+                .chapter-font {
+                    font-size: 15px;
                     line-height: 30px;
                     margin-right: 15px;
                 }
-                .svg-icon{
-                    cursor:pointer;
+
+                .svg-icon {
+                    cursor: pointer;
                 }
-                .chapter{
+
+                .chapter {
                     font-weight: bold;
-                    cursor:pointer;
+                    cursor: pointer;
                     margin-right: 20px;
                     margin-left: 20px;
                 }
             }
+
             /*.boot-wrapper-bottom{*/
             /*    width: 100%;*/
             /*    height: 30px;*/
@@ -412,11 +463,12 @@
                 height: 1em;
                 fill: currentColor;
                 overflow: hidden;
-                color: #91D5FF;
+                color: #666666;
                 font-size: 20px;
-                margin-top:2px;
-                &:hover{
-                    color: #2F89DF;
+                margin-top: 2px;
+                transition: all 0.2s linear 0s;
+                &:hover {
+                    color: #FFA400;
                 }
             }
         }
@@ -444,7 +496,6 @@
                 }
             }
         }
-
         .ant-drawer-body {
             padding: 0;
         }

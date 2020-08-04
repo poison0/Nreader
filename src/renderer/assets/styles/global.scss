@@ -10,3 +10,52 @@ $fontSize:37.5;
     justify-content: center;
     align-items: center;
 }
+
+@keyframes fadeInBottom {
+    from {
+      bottom: -40px;
+    }
+
+    to {
+      bottom: 10px;
+    }
+}
+@keyframes fadeOutBottom {
+    from {
+      bottom: 10px;
+    }
+
+    to {
+      bottom: -40px;
+    }
+}
+@keyframes fadeInTop {
+  from {
+    top: -40px;
+  }
+
+  to {
+    top: 10px;
+  }
+}
+@keyframes fadeOutTop {
+  from {
+    top: 10px;
+  }
+
+  to {
+    top: -40px;
+  }
+}
+.fade-in-bottom {
+  animation: fadeInBottom .2s ease-in forwards;
+}
+.fade-out-bottom {
+  animation: fadeOutBottom .2s ease-out forwards;
+}
+.fade-in-top {
+  animation: fadeInTop .2s ease-in forwards;
+}
+.fade-out-top {
+  animation: fadeOutTop .2s ease-out forwards;
+}
