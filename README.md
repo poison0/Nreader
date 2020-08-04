@@ -17,6 +17,9 @@ npm run build
 # run unit & end-to-end tests
 npm test
 
+![image](https://github.com/poison0/Nreader/blob/master/showPic/2020-08-04%20235059.jpg)
+![image](https://github.com/poison0/Nreader/blob/master/showPic/2020-08-04%20235304.jpg)
+![image](https://github.com/poison0/Nreader/blob/master/showPic/2020-08-04%20235325.jpg)
 
 ```
 
