@@ -3,11 +3,11 @@
 > epub 阅读器
 
 #### 技术栈
-[electron](https://github.com/electron/electron)
-[Vue](https://github.com/vuejs/vue)
-[electron-vue](https://github.com/SimulatedGREG/electron-vue)
-[epubjs](https://github.com/futurepress/epub.js)
-[ant-design](https://github.com/vueComponent/ant-design-vue)
+[electron](https://github.com/electron/electron),
+[Vue](https://github.com/vuejs/vue),
+[electron-vue](https://github.com/SimulatedGREG/electron-vue),
+[epubjs](https://github.com/futurepress/epub.js),
+[ant-design](https://github.com/vueComponent/ant-design-vue),
 [lowDb](https://github.com/typicode/lowdb)
 
 
