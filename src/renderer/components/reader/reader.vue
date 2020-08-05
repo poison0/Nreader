@@ -13,24 +13,47 @@
             <div class="right">
                 <div class="vertical-line">|</div>
                 <div class="color-title">颜色</div>
-                <div class="show-color white"/>
-                <div class="show-color yellow"/>
-                <div class="show-color green"/>
-                <div class="show-color gray"/>
-                <div class="show-color dark"/>
+                <div :class="['show-color','white',colorIndex === 1?'choose-color':'']" @click="setColor(1)"/>
+                <div :class="['show-color','yellow',colorIndex === 2?'choose-color':'']" @click="setColor(2)"/>
+                <div :class="['show-color','green',colorIndex === 3?'choose-color':'']" @click="setColor(3)"/>
+                <div :class="['show-color','gray',colorIndex === 4?'choose-color':'']" @click="setColor(4)"/>
+                <div :class="['show-color','dark',colorIndex === 5?'choose-color':'']" @click="setColor(5)"/>
                 <div class="vertical-line">|</div>
                 <div class="show-font-size">字号</div>
                 <div class="plus">
-                    <a-icon type="plus-circle"/>
+                    <a-icon type="plus-circle" @click="changeFontSize(0)"/>
                 </div>
-                <div class="font-size">16</div>
+                <div class="font-size">{{fontSize}}</div>
                 <div class="plus">
-                    <a-icon type="plus-circle"/>
+                    <a-icon type="plus-circle" @click="changeFontSize(1)"/>
                 </div>
+                <div class="vertical-line margin-left-10" >|</div>
+                <div class="show-font-size">更多设置</div>
+                <a-popover  trigger="click">
+                    <template slot="content">
+                        <div>字体</div>
+                        <a-radio-group name="radioGroup" :default-value="1">
+                            <a-radio :value="1">
+                                黑体
+                            </a-radio>
+                            <a-radio :value="2">
+                                楷体
+                            </a-radio>
+                            <a-radio :value="3">
+                                宋体
+                            </a-radio>
+                            <a-radio :value="4">
+                                苹方
+                            </a-radio>
+                        </a-radio-group>
+                    </template>
+                    <div class="setting-ico"><a-icon type="setting" /></div>
+                </a-popover>
+
             </div>
         </div>
         <div class="read-wrapper">
-            <div id="read"></div>
+            <div id="read" :class="[bgColor,fontColor]"></div>
             <div class="mask">
                 <div class="left" @click="prevPage"></div>
                 <div class="center" @click="toggleTitle"></div>
@@ -62,40 +85,6 @@
                     <a-icon type="step-forward" title="下一章"/>
                 </div>
             </div>
-            <!--                <div class="boot-wrapper-bottom">-->
-            <!--                    <div>-->
-            <!--                        <svg @click="showDrawer" class="icon left" aria-hidden="true">-->
-            <!--                            <use xlink:href="#icon-mulu"/>-->
-            <!--                        </svg>-->
-            <!--                    </div>-->
-            <!--                    <div>-->
-            <!--                        <a-popover trigger="click">-->
-            <!--                            <template slot="content">-->
-            <!--                                <div class="fontType">-->
-            <!--                                    <div style="margin:10px">-->
-            <!--                                        字号-->
-            <!--                                        <a-button-group>-->
-            <!--                                            <a-button @click="changeFontSize(0)">-->
-            <!--                                                <a-icon type="left"/>-->
-            <!--                                            </a-button>-->
-            <!--                                            <a-button @click="changeFontSize(1)">-->
-            <!--                                                <a-icon type="right"/>-->
-            <!--                                            </a-button>-->
-            <!--                                        </a-button-group>-->
-            <!--                                    </div>-->
-            <!--                                    <div style="margin:10px">-->
-            <!--                                        字体-->
-            <!--                                        <a-button-group>-->
-            <!--                                            <a-button>简体</a-button>-->
-            <!--                                            <a-button>繁体</a-button>-->
-            <!--                                        </a-button-group>-->
-            <!--                                    </div>-->
-            <!--                                </div>-->
-            <!--                            </template>-->
-            <!--                            <div>Aa</div>-->
-            <!--                        </a-popover>-->
-            <!--                    </div>-->
-            <!--                </div>-->
         </div>
     </div>
 </template>
@@ -123,7 +112,11 @@
                 navigation: {},
                 isShowAa: false,
                 fontSize: 14,
-                locations: {}// 定位
+                locations: {},// 定位
+                book:{},
+                bgColor:"white",//背景颜色
+                fontColor:"pureBlack",//字体颜色
+                colorIndex:1
             }
         },
         mounted() {
@@ -153,6 +146,16 @@
             confirm() {
                 message.info('Clicked on Yes.')
             },
+            setColor(index){
+                switch (index) {
+                    case 1:this.colorIndex = 1;this.bgColor = "white";break;
+                    case 2:this.colorIndex = 2;this.bgColor = "yellow";break;
+                    case 3:this.colorIndex = 3;this.bgColor = "green";break;
+                    case 4:this.colorIndex = 4;this.bgColor = "gray";break;
+                    case 5:this.colorIndex = 5;this.bgColor = "dark";break;
+                    default:
+                }
+            },
             // 电子书解析渲染
             showEpub(path) {
                 // 生成book
@@ -177,6 +180,7 @@
                         // this.onLocationChange(1407)
                         // console.log(this.book)
                         this.total = this.locations.total
+                        console.log(this.locations)
                         // this.locations = this.book.locations
                         // this.bookAvailable = true
                         // console.log(this.book.pageList.cfiFromPage(2))
@@ -248,7 +252,31 @@
     .wrapper {
         position: absolute;
         width: 100%;
+        .white {
+            background-color: #FCFCFC;
+        }
 
+        .yellow {
+            background-color: #F9F4E9;
+        }
+
+        .green {
+            background-color: #CEEABA;
+        }
+
+        .gray {
+            background-color: #6D6D6F;
+        }
+
+        .dark {
+            background-color: #3B403C;
+        }
+        .pureBlack {
+            color: #000000;
+        }
+        .margin-left-10{
+            margin-left: 10px;
+        }
         .title-wrapper {
             position: absolute;
             top: 0;
@@ -315,9 +343,19 @@
                         color: #FFA400;
                     }
                 }
+                .setting-ico{
+                    margin-top: 2px;
+                    cursor: pointer;
+                }
                 .font-size{
                     font-weight: normal;
                     margin-left: 6px;
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
                 }
 
                 .show-color {
@@ -332,28 +370,9 @@
                         border: 1px solid #FFA400;
                     }
                 }
-
-                .white {
-                    background-color: #FCFCFC;
+                .choose-color{
+                    border: 1px solid #FFA400;
                 }
-
-                .yellow {
-                    background-color: #F9F4E9;
-                }
-
-                .green {
-                    background-color: #CEEABA;
-                }
-
-                .gray {
-                    background-color: #6D6D6F;
-                }
-
-                .dark {
-                    background-color: #3B403C;
-                }
-
-
             }
 
             &.slide-down-enter {
@@ -374,7 +393,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 30px;
+            height: 40px;
             z-index: 101;
             background: white;
             display: flex;
@@ -386,7 +405,7 @@
                 width: 100%;
                 height: 30px;
                 display: flex;
-                padding-top: 10px;
+                padding-top: 5px;
                 justify-content: center;
                 align-items: center;
 
@@ -444,6 +463,7 @@
                     line-height: 35px;
                     flex: 0 0 40px;
                 }
+
             }
 
             &.slide-down-enter {
