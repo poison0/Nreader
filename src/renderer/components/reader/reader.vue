@@ -28,27 +28,8 @@
                     <a-icon type="plus-circle" @click="changeFontSize(1)"/>
                 </div>
                 <div class="vertical-line margin-left-10" >|</div>
-                <div class="show-font-size">更多设置</div>
-                <a-popover  trigger="click">
-                    <template slot="content">
-                        <div>字体</div>
-                        <a-radio-group name="radioGroup" :default-value="1">
-                            <a-radio :value="1">
-                                黑体
-                            </a-radio>
-                            <a-radio :value="2">
-                                楷体
-                            </a-radio>
-                            <a-radio :value="3">
-                                宋体
-                            </a-radio>
-                            <a-radio :value="4">
-                                苹方
-                            </a-radio>
-                        </a-radio-group>
-                    </template>
-                    <div class="setting-ico"><a-icon type="setting" /></div>
-                </a-popover>
+                <div class="show-font-size" style="cursor: pointer;" @click="showModal">更多设置</div>
+                 <div class="setting-ico"  @click="showModal"><a-icon type="setting" /></div>
 
             </div>
         </div>
@@ -86,13 +67,38 @@
                 </div>
             </div>
         </div>
+        <a-modal
+                :visible="settingVisible"
+                :confirm-loading="confirmLoading"
+                @ok="handleOk"
+                @cancel="handleCancel"
+                :footer="null"
+        >
+            <div style="font-weight: bold;margin-bottom:10px">字体</div>
+            <a-radio-group name="radioGroup" :default-value="1" @change="changeFontFamily">
+                <a-radio :value="1">
+                    <span style="font-family: '微软雅黑'">黑体</span>
+                </a-radio>
+                <a-radio :value="2">
+                    <span style="font-family: '楷体'">楷体</span>
+                </a-radio>
+                <a-radio :value="3">
+                    <span style="font-family: '宋体'">宋体</span>
+                </a-radio>
+                <a-radio :value="4">
+                    <span style="font-family: '苹方'">苹方</span>
+                </a-radio>
+                <a-radio :value="5">
+                    <span style="font-family: '幼圆'">幼圆</span>
+                </a-radio>
+            </a-radio-group>
+        </a-modal>
     </div>
 </template>
 
 <script>
     import SystemInformation from '../landingPage/SystemInformation'
     import Epub from 'epubjs'
-    import classNames from 'classnames';
     import indexMode from './indexMode'
 
     const remote = require('electron').remote;
@@ -116,7 +122,10 @@
                 book:{},
                 bgColor:"white",//背景颜色
                 fontColor:"pureBlack",//字体颜色
-                colorIndex:1
+                colorIndex:1,
+                ModalText: 'Content of the modal',
+                settingVisible: false,
+                confirmLoading: false,
             }
         },
         mounted() {
@@ -127,6 +136,21 @@
 
         },
         methods: {
+            showModal() {
+                this.settingVisible = true;
+            },
+            handleOk(e) {
+                this.ModalText = 'The modal will be closed after two seconds';
+                this.confirmLoading = true;
+                setTimeout(() => {
+                    this.settingVisible = false;
+                    this.confirmLoading = false;
+                }, 2000);
+            },
+            handleCancel(e) {
+                console.log('Clicked cancel button');
+                this.settingVisible = false;
+            },
             newPage() {
                 let win = new BrowserWindow({width: 800, height: 600});
                 win.loadURL('http://r.qq.com');
@@ -211,7 +235,7 @@
             toggleTitle() {
                 this.ifTitleShow = !this.ifTitleShow
             },
-            // 改变字体
+            // 改变字体大小
             changeFontSize(status) {
                 if (status === 0) {
                     if (this.fontSize > 12) {
@@ -226,6 +250,19 @@
                         this.setFontSize(this.fontSize)
                     }
                 }
+            },
+            // 改变字体
+            changeFontFamily(status) {
+                switch (status.target.value) {
+                    case 1:this.themes.font("微软雅黑");console.log(status.target.value);break;
+                    case 2:this.themes.font("楷体");console.log(status.target.value);break;
+                    case 3:this.themes.font("宋体");console.log(status.target.value);break;
+                    case 4:this.themes.font("苹方");console.log(status.target.value);break;
+                    case 5:this.themes.font("幼圆");console.log(status.target.value);break;
+
+                }
+                console.log(status)
+
             },
             // 切换字号
             setFontSize(size) {
