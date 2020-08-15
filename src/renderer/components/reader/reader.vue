@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="read-wrapper">
-            <div id="read" :class="[bgColor,fontColor]"></div>
+            <div id="read" :class="[bgColor,fontColor]" :style="'height:'+pageHeight+'px'"></div>
             <div class="mask">
                 <div class="left" @click="prevPage"></div>
                 <div class="center" @click="toggleTitle"></div>
@@ -49,7 +49,7 @@
             }"
         >
             <div class="boot-wrapper-top">
-                <div class="chapter-font">14/35</div>
+                <div class="chapter-font">{{currentChapter}}/{{totalChapter}}</div>
                 <div class="svg-icon">
                     <svg @click="showDrawer" class="icon left" aria-hidden="true">
                         <use xlink:href="#icon-mulu"/>
@@ -59,8 +59,8 @@
                     <a-icon type="step-backward" title="上一章"/>
                 </div>
                 <div style="width:600px;margin-top:5px">
-                    <a-slider id="test" :defaultValue="30" :max="total" :min="0" @change="onLocationChange"
-                              :step="3"/>
+                    <a-slider id="test"  v-model="currentPage" :max="total" :min="0" @change="onLocationChange"
+                              :step="1"/>
                 </div>
                 <div class="chapter">
                     <a-icon type="step-forward" title="下一章"/>
@@ -126,11 +126,26 @@
                 ModalText: 'Content of the modal',
                 settingVisible: false,
                 confirmLoading: false,
+                currentPage:0,
+                path:"",//书籍地址
+                pageHeight: window.innerHeight - 10,
+                totalChapter:0, //总章节数
+                currentChapter:0, //当前章节数
             }
+        },
+        created() {
+            let self = this
+            //监视页面大小变化
+            remote.getCurrentWindow().on('resize', (a) => {
+                console.log(window.innerHeight)
+                self.pageHeight = window.innerHeight -10;
+                this.$forceUpdate();
+            })
         },
         mounted() {
             let self = this
             ipcRenderer.on('ping', function (event, arg) {
+                self.path = JSON.parse(arg).path
                 self.showEpub(JSON.parse(arg).path);
             });
 
@@ -148,7 +163,6 @@
                 }, 2000);
             },
             handleCancel(e) {
-                console.log('Clicked cancel button');
                 this.settingVisible = false;
             },
             newPage() {
@@ -186,9 +200,9 @@
                 this.book = new Epub(path)
                 // 生成rendition
                 this.rendition = this.book.renderTo('read', {
-                    width: window.innerWidth,
-                    height: window.innerHeight - 10
+                    width: "100%",
                 })
+
                 // 生成rendition.display电子书
                 this.rendition.display()
                 this.themes = this.rendition.themes
@@ -196,30 +210,33 @@
                 this.book.ready
                     .then(() => {
                         this.navigation = this.book.navigation
+                        console.log(this.navigation)
                         return this.book.locations.generate()
                     })
                     .then(result => {
                         this.locations = this.book.locations
-
-                        // this.onLocationChange(1407)
-                        // console.log(this.book)
                         this.total = this.locations.total
-                        console.log(this.locations)
-                        // this.locations = this.book.locations
-                        // this.bookAvailable = true
-                        // console.log(this.book.pageList.cfiFromPage(2))
+                        this.syncIndex();
                     })
             },
             nextPage() {
                 if (this.rendition) {
                     this.rendition.next()
+                    this.syncIndex()
                 }
             },
             // 目录跳转
             jumpTo(href) {
                 this.rendition.display(href).then(res => {
                     this.closeAllTable()
+                    this.syncIndex()
                 })
+            },
+            //同步进度
+            syncIndex(){
+                this.currentChapter = this.rendition.currentLocation().end.displayed.page;
+                this.totalChapter = this.rendition.currentLocation().end.displayed.total;
+                this.currentPage = this.rendition.currentLocation().end.location;
             },
             // 关闭所有蒙版
             closeAllTable() {
@@ -229,6 +246,7 @@
             prevPage() {
                 if (this.rendition) {
                     this.rendition.prev()
+                    this.syncIndex()
                 }
             },
             // 切换标题显示

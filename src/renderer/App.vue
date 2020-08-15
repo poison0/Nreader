@@ -16,7 +16,6 @@
 
 <style type="text/css" lang="scss">
 
-    //修改全局滚动条
     ::-webkit-scrollbar {
         width: 7px; /*滚动条宽度*/
         height: 2px;  /*滚动条高度*/
