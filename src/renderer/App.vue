@@ -15,10 +15,16 @@
 </script>
 
 <style type="text/css" lang="scss">
-
+    html, body{
+        width: 100%;
+        height: 100%;
+    }
+    #app{
+        height: 100%;
+    }
     ::-webkit-scrollbar {
         width: 7px; /*滚动条宽度*/
-        height: 2px;  /*滚动条高度*/
+        height: 7px;  /*滚动条高度*/
     }
 
     /*定义滚动条轨道 内阴影+圆角*/

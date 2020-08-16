@@ -65,7 +65,7 @@
     import {copyFile} from "../util/operFile";
     const {dialog} = require('electron').remote;
     const {ipcRenderer} = require('electron');
-    const BrowserWindow = require('electron').remote.BrowserWindow;
+    const remote = require('electron').remote;
 
     global.Epub = Epub
     export default {
@@ -76,9 +76,16 @@
                 navigation: 0,
                 books:[],
                 bookNum:0,
+                pageHeight:window.innerHeight,
             }
         },
         mounted() {
+            // let self = this
+            // //监视页面大小变化
+            // remote.getCurrentWindow().on('resize', (a) => {
+            //     console.log(window.innerHeight)
+            //     self.pageHeight = window.innerHeight;
+            // })
            this.getAllBookInfo()
         },
         methods: {
@@ -160,9 +167,8 @@
 <style lang="scss" scoped>
     .page {
         width: 100%;
-        height: 700px;
+        height: 100%;
         background-color: #EFEFEF;
-
         .header {
             display: flex;
             flex-direction: row;
@@ -193,8 +199,8 @@
             font-family: '华文细黑', 'Courier New', Courier, monospace;
             display: flex;
             flex-direction: row;
-            height: 660px;
-
+            /*height: 660px;*/
+            height: 100%;
             .-left-content {
                 width: 20%;
                 max-width: 200px;
