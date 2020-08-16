@@ -43,12 +43,12 @@
                 <div class="-right-bar">
                     <div class="-right-bar-label">全部图书({{bookNum}})</div>
                     <div class="-right-bar-search">
-                        <a-input-search placeholder="书名搜索" size="small" style="width: 200px"/>
+                        <a-input-search placeholder="书名搜索" @search="search" size="small" style="width: 200px"/>
                     </div>
                 </div>
-                <div class="-right-content-book">
+                <div class="-right-content-book" :style="'height:'+(pageHeight-90)+'px'">
                     <div class="-book-item" v-for="book in books">
-                        <a-card-grid class="-book-pic" @click="openBook(book)">
+                        <a-card-grid class="-book-pic" @click="openBook(book)" :title="book.title">
                             <div class="info"></div>
                             <img :src="book.url" width="180" />
                         </a-card-grid>
@@ -75,24 +75,39 @@
                 //导航
                 navigation: 0,
                 books:[],
+                allBooks:[],
                 bookNum:0,
                 pageHeight:window.innerHeight,
+                searchValue:"",
             }
         },
         mounted() {
-            // let self = this
-            // //监视页面大小变化
-            // remote.getCurrentWindow().on('resize', (a) => {
-            //     console.log(window.innerHeight)
-            //     self.pageHeight = window.innerHeight;
-            // })
+            let self = this
+            //监视页面大小变化
+            remote.getCurrentWindow().on('resize', (a) => {
+                self.pageHeight = window.innerHeight;
+            })
            this.getAllBookInfo()
         },
         methods: {
+            search(value, event){
+                if(value){
+                    this.books = [];
+                    for (let i = 0; i < this.allBooks.length; i++) {
+                        if(this.allBooks[i].title.indexOf(value) > -1){
+                            console.log(this.allBooks[i].title)
+                            this.books.push(this.allBooks[i])
+                        }
+                    }
+                }else{
+                    this.books = this.allBooks
+                }
+            },
             getAllBookInfo(){
                 let bookItem = getAllMeta();
                 if(bookItem){
                     this.books = bookItem;
+                    this.allBooks = bookItem;
                     this.bookNum = this.books.length;
                 }else{
                     createBooks();
@@ -169,17 +184,20 @@
         width: 100%;
         height: 100%;
         background-color: #EFEFEF;
+        position: relative;
+        overflow: hidden;
         .header {
+            top:0;
+            position:absolute;
             display: flex;
             flex-direction: row;
             justify-items: center;
             width: 100%;
-            height: 40px;
+            height: 48px;
             background-color: #ffffff;
             /*background-color: #FFA400;*/
             box-shadow: 0 0 4px #999999;
-            position: relative;
-            z-index: 100;
+            z-index: 111;
 
             .title {
                 color: #FFA400;
@@ -190,20 +208,24 @@
                 font-weight: bolder;
                 margin-left: 20px;
                 width: 100px;
-                height: 40px;
-                line-height: 40px;
+                height: 48px;
+                line-height: 48px;
             }
         }
 
         .content {
+            /*position:absolute;*/
             font-family: '华文细黑', 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: row;
+            /*display: flex;*/
+            /*flex-direction: row;*/
             /*height: 660px;*/
             height: 100%;
+            position: relative;
+            margin-top:48px;
             .-left-content {
-                width: 20%;
-                max-width: 200px;
+                float: left;
+                /*width: 20%;*/
+                width: 200px;
                 height: 100%;
                 border-right: 1px solid #E4E4E4;
                 /*box-shadow: 0 0 4px #999999;*/
@@ -275,12 +297,15 @@
             }
 
             .-right-content {
-                min-width: 80%;
+                /*float: right;*/
+                /*min-width: 80%;*/
+                margin-left: 200px;
                 height: 100%;
                 display: flex;
+                overflow: auto;
                 flex-direction: column;
                 background-color: #E4E4E4;
-
+                /*position: relative;*/
                 .-right-bar {
                     flex-shrink: 0;
                     display: flex;
@@ -311,6 +336,7 @@
                 }
 
                 .-right-content-book {
+                    /*max-height: 500px;*/
                     overflow-y: scroll;
                     display: flex;
                     flex-direction: row;
@@ -318,7 +344,7 @@
                     flex-wrap: wrap;
                     /*margin-left: 10px;*/
                     /*margin-top: 10px;*/
-                    margin-bottom: 10px;
+                    /*margin-bottom: 10px;*/
                     background-color: #ffffff;
                     /*box-shadow: 0 0 4px #FFA400;*/
                     .-book-item {
