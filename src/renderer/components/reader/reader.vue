@@ -29,12 +29,22 @@
                 </div>
                 <div class="vertical-line margin-left-10" >|</div>
                 <div class="show-font-size" style="cursor: pointer;" @click="showModal">更多设置</div>
-                 <div class="setting-ico"  @click="showModal"><a-icon type="setting" /></div>
+                <div class="setting-ico"  @click="showModal">
+                    <a-icon type="setting" />
+                </div>
 
+            </div>
+            <div class="right-ico">
+                <div v-show="!isFullScreen" class="screen-ico"  @click="maxWindow">
+                    <a-icon type="fullscreen" />
+                </div>
+                <div v-show="isFullScreen" class="screen-ico"  @click="maxWindow">
+                    <a-icon type="fullscreen-exit" />
+                </div>
             </div>
         </div>
         <div class="read-wrapper">
-            <div id="read" :class="[bgColor,fontColor]" :style="'height:'+pageHeight+'px'"></div>
+            <div id="read" :class="[bgColor,fontColor]" :style="'height:'+pageHeight+'px; -webkit-user-select:auto;'"></div>
             <div class="mask">
                 <div class="left" @click="prevPage"></div>
                 <div class="center" @click="toggleTitle"></div>
@@ -58,7 +68,7 @@
                 <div class="chapter">
                     <a-icon type="step-backward" title="上一章"/>
                 </div>
-                <div style="width:600px;margin-top:5px">
+                <div style="width:75%;margin-top:5px">
                     <a-slider id="test"  v-model="currentPage" :max="total" :min="0" @change="onLocationChange"
                               :step="1"/>
                 </div>
@@ -131,6 +141,7 @@
                 pageHeight: window.innerHeight - 10,
                 totalChapter:0, //总章节数
                 currentChapter:0, //当前章节数
+                isFullScreen:false,
             }
         },
         created() {
@@ -151,6 +162,22 @@
 
         },
         methods: {
+            //窗口最大化
+            maxWindow() {
+                const browserWindow = remote.getCurrentWindow();
+                if(!this.isFullScreen){
+                    browserWindow.setFullScreen(true)
+                    this.isFullScreen = true
+                }else{
+                    browserWindow.setFullScreen(false)
+                    this.isFullScreen = false
+                }
+                // if(!isMaxed) {
+                //     browserWindow.unmaximize();
+                // } else {
+                //     browserWindow.maximize();
+                // }
+            },
             showModal() {
                 this.settingVisible = true;
             },
@@ -340,7 +367,7 @@
             height: 35px;
             z-index: 101;
             background: white;
-            display: flex;
+            /*display: flex;*/
             box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 
             .title {
@@ -352,6 +379,7 @@
                 width: 100px;
                 height: 35px;
                 line-height: 35px;
+                float: left;
             }
 
             .left {
@@ -360,8 +388,26 @@
                 line-height: 30px;
                 text-align: center;
             }
-
+            .right-ico{
+                float: right;
+                display: flex;
+                height: 35px;
+                justify-content:center;
+                align-items:center;
+                margin-right: 20px;
+                color: #DDDDDD;
+                font-size: 20px;
+                .screen-ico{
+                    margin-top: 10px;
+                    float: right;
+                }
+                cursor: pointer;
+                &:hover {
+                    color: #666666;
+                }
+            }
             .right {
+                float: left;
                 color: #666666;
                 display: flex;
                 flex-direction: row;
@@ -369,7 +415,7 @@
                 font-family: "微软雅黑";
                 font-weight: bolder;
                 margin-left: 20px;
-                /*width: 100px;*/
+                width: 500px;
                 height: 35px;
                 line-height: 35px;
                 align-items: center;
@@ -402,15 +448,16 @@
                     margin-top: 2px;
                     cursor: pointer;
                 }
+
                 .font-size{
                     font-weight: normal;
                     margin-left: 6px;
-                    -webkit-touch-callout: none;
-                    -webkit-user-select: none;
-                    -khtml-user-select: none;
-                    -moz-user-select: none;
-                    -ms-user-select: none;
-                    user-select: none;
+                    /*-webkit-touch-callout: none;*/
+                    /*-webkit-user-select: none;*/
+                    /*-khtml-user-select: none;*/
+                    /*-moz-user-select: none;*/
+                    /*-ms-user-select: none;*/
+                    /*user-select: none;*/
                 }
 
                 .show-color {
