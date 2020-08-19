@@ -48,11 +48,18 @@
                 </div>
                 <div class="-right-content-book" :style="'height:'+(pageHeight-90)+'px'">
                     <div class="-book-item" v-for="book in books">
-                        <a-card-grid class="-book-pic" @click="openBook(book)" :title="book.title">
+<!--                        <div>-->
+<!--                            <svg t="1597847973497" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7462" width="32" height="32"><path d="M512 624a112 112 0 1 0 0-224 112 112 0 0 0 0 224z" p-id="7463" fill="#d81e06"></path></svg>-->
+<!--                            新添加-->
+<!--                        </div>-->
+                        <a-card-grid class="-book-pic" @click="openBook(book)" :title="book.title" @contextmenu="rightClick(book)">
                             <div class="info"></div>
                             <img :src="book.url" width="180" />
                         </a-card-grid>
                         <div class="-book-title">{{book.title}}</div>
+                    </div>
+                    <div class="empty-img" :style="'height:'+(pageHeight-90)+'px'">
+                        <a-empty description="点击&quot;添加图书&quot;添加书籍" v-show="books.length === 0" />
                     </div>
                 </div>
             </div>
@@ -61,9 +68,9 @@
 </template>
 <script>
     import Epub from "epubjs";
-    import {isMeta, setMeta, getAllMeta, createBooks} from "../util/operDb";
-    import {copyFile} from "../util/operFile";
-    const {dialog} = require('electron').remote;
+    import {isMeta, setMeta, getAllMeta, createBooks,deleteMeta} from "../util/operDb";
+    import {copyFile,deleteFile} from "../util/operFile";
+    const {dialog,Menu, MenuItem,nativeImage} = require('electron').remote;
     const {ipcRenderer} = require('electron');
     const remote = require('electron').remote;
 
@@ -102,6 +109,61 @@
                 }else{
                     this.books = this.allBooks
                 }
+            },
+            //右键菜单
+            rightClick: function (book) {
+                const self = this
+                const menu = new Menu()
+                menu.append(new MenuItem({
+                    label: '打开',
+                    icon: nativeImage.createFromPath('src/renderer/assets/open.png'),
+                    click: function () {
+                        self.openBook(book)
+                        // 执行remove方法，不能直接使用 this.removeItem
+                        // self.removeItem(id)
+                    }
+                }))
+                menu.append(new MenuItem({
+                    type: 'separator',
+                }))
+                console.log()
+                menu.append(new MenuItem({
+                    label: '彻底删除',
+                    icon: nativeImage.createFromPath('src/renderer/assets/delete.png'),
+                    click: function () {
+                        // 执行remove方法，不能直接使用 this.removeItem
+                        // self.removeItem(id)
+                        console.log(book)
+                        self.deleteBook(book)
+                        console.log(self.books)
+                        console.log(self.allBooks)
+                    }
+                }))
+                // 第二个菜单
+                // menu.append( ... )
+                // 展示出来
+                menu.popup(remote.getCurrentWindow())
+            },
+            //删除图书
+            deleteBook(book){
+                //删除数据库数据
+                deleteMeta(book.id);
+                // //删除图书
+                deleteFile(book.path);
+                //删除显示数据
+                for (let i = 0; i < this.books.length; i++) {
+                    if(this.books[i].id === book.id){
+                        this.books.splice(i,1);
+                        break;
+                    }
+                }
+                for (let i = 0; i < this.allBooks.length; i++) {
+                    if(this.allBooks[i].id === book.id){
+                        this.allBooks.splice(i,1);
+                        break;
+                    }
+                }
+                this.$forceUpdate();
             },
             getAllBookInfo(){
                 let bookItem = getAllMeta();
@@ -347,6 +409,14 @@
                     /*margin-bottom: 10px;*/
                     background-color: #ffffff;
                     /*box-shadow: 0 0 4px #FFA400;*/
+                    .empty-img{
+                        /*height: 100%;*/
+                        width: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding-bottom: 100px;
+                    }
                     .-book-item {
                         display: flex;
                         flex-direction: column;
@@ -391,8 +461,8 @@
                                 background-color: #ffffff;
                                 opacity: 0.8;
                                 border-radius: 0 2px 2px 0;
-                                transition:width 0.5s;
-                                -webkit-transition:width 0.5s;
+                                transition:width 0.3s;
+                                -webkit-transition:width 0.3s;
                                 &:hover{
                                     width:180px;
                                 }

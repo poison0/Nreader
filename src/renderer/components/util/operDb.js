@@ -14,6 +14,9 @@ export function setMeta(meta,url,path) {
     }
 
 }
+export function deleteMeta(id) {
+    db.get('books').remove({ id: id }).write()
+}
 export function isMeta(id) {
     if(db.get('books')
         .find({ id: id })

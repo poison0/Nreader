@@ -4,3 +4,7 @@ var fs = require('fs');
 export function copyFile(sourcePath,destPath,callback) {
     fs.copyFile(sourcePath,destPath,callback)
 }
+//拷贝文件
+export function deleteFile(sourcePath) {
+    fs.unlinkSync(sourcePath)
+}
