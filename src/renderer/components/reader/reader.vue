@@ -13,17 +13,17 @@
             <div class="right">
                 <div class="vertical-line">|</div>
                 <div class="color-title">颜色</div>
-                <div :class="['show-color','white',colorIndex === 1?'choose-color':'']" @click="setColor(1)"/>
-                <div :class="['show-color','yellow',colorIndex === 2?'choose-color':'']" @click="setColor(2)"/>
-                <div :class="['show-color','green',colorIndex === 3?'choose-color':'']" @click="setColor(3)"/>
-                <div :class="['show-color','gray',colorIndex === 4?'choose-color':'']" @click="setColor(4)"/>
-                <div :class="['show-color','dark',colorIndex === 5?'choose-color':'']" @click="setColor(5)"/>
+                <div :class="['show-color','white',setting.bgColor === 1?'choose-color':'']" @click="setColor(1)"/>
+                <div :class="['show-color','yellow',setting.bgColor === 2?'choose-color':'']" @click="setColor(2)"/>
+                <div :class="['show-color','green',setting.bgColor === 3?'choose-color':'']" @click="setColor(3)"/>
+                <div :class="['show-color','gray',setting.bgColor === 4?'choose-color':'']" @click="setColor(4)"/>
+                <div :class="['show-color','dark',setting.bgColor === 5?'choose-color':'']" @click="setColor(5)"/>
                 <div class="vertical-line">|</div>
                 <div class="show-font-size">字号</div>
                 <div class="plus">
                     <a-icon type="plus-circle" @click="changeFontSize(0)"/>
                 </div>
-                <div class="font-size">{{fontSize}}</div>
+                <div class="font-size">{{setting.fontSize}}</div>
                 <div class="plus">
                     <a-icon type="plus-circle" @click="changeFontSize(1)"/>
                 </div>
@@ -85,7 +85,7 @@
                 :footer="null"
         >
             <div style="font-weight: bold;margin-bottom:10px">字体</div>
-            <a-radio-group name="radioGroup" :default-value="1" @change="changeFontFamily">
+            <a-radio-group name="radioGroup"  :default-value="setting.fontFamily" @change="changeFontFamily">
                 <a-radio :value="1">
                     <span style="font-family: '微软雅黑'">黑体</span>
                 </a-radio>
@@ -110,7 +110,7 @@
     import SystemInformation from '../landingPage/SystemInformation'
     import Epub from 'epubjs'
     import indexMode from './indexMode'
-
+    import {setSetting,getSetting} from "../util/operDb";
     const remote = require('electron').remote;
     const ipcRenderer = require('electron').ipcRenderer;
     const BrowserWindow = remote.BrowserWindow;
@@ -127,12 +127,10 @@
                 text: 'Are you sure to delete this task?',
                 navigation: {},
                 isShowAa: false,
-                fontSize: 14,
                 locations: {},// 定位
                 book:{},
                 bgColor:"white",//背景颜色
                 fontColor:"pureBlack",//字体颜色
-                colorIndex:1,
                 ModalText: 'Content of the modal',
                 settingVisible: false,
                 confirmLoading: false,
@@ -142,6 +140,11 @@
                 totalChapter:0, //总章节数
                 currentChapter:0, //当前章节数
                 isFullScreen:false,
+                setting:{
+                    bgColor:1,
+                    fontSize:16,
+                    fontFamily:1,
+                }
             }
         },
         created() {
@@ -159,7 +162,10 @@
                 self.path = JSON.parse(arg).path
                 self.showEpub(JSON.parse(arg).path);
             });
-
+            let set = getSetting()
+            if (set) {
+                this.setting = set
+            }
         },
         methods: {
             //窗口最大化
@@ -172,11 +178,6 @@
                     browserWindow.setFullScreen(false)
                     this.isFullScreen = false
                 }
-                // if(!isMaxed) {
-                //     browserWindow.unmaximize();
-                // } else {
-                //     browserWindow.maximize();
-                // }
             },
             showModal() {
                 this.settingVisible = true;
@@ -213,13 +214,14 @@
             },
             setColor(index){
                 switch (index) {
-                    case 1:this.colorIndex = 1;this.bgColor = "white";break;
-                    case 2:this.colorIndex = 2;this.bgColor = "yellow";break;
-                    case 3:this.colorIndex = 3;this.bgColor = "green";break;
-                    case 4:this.colorIndex = 4;this.bgColor = "gray";break;
-                    case 5:this.colorIndex = 5;this.bgColor = "dark";break;
+                    case 1:this.setting.bgColor = 1;this.bgColor = "white";break;
+                    case 2:this.setting.bgColor = 2;this.bgColor = "yellow";break;
+                    case 3:this.setting.bgColor = 3;this.bgColor = "green";break;
+                    case 4:this.setting.bgColor = 4;this.bgColor = "gray";break;
+                    case 5:this.setting.bgColor = 5;this.bgColor = "dark";break;
                     default:
                 }
+                setSetting(this.setting)
             },
             // 电子书解析渲染
             showEpub(path) {
@@ -233,11 +235,12 @@
                 // 生成rendition.display电子书
                 this.rendition.display()
                 this.themes = this.rendition.themes
-                this.setFontSize(this.fontSize)
+                this.setFontSize(this.setting.fontSize)
+                this.setFamily(this.setting.fontFamily)
+                this.setColor(this.setting.bgColor)
                 this.book.ready
                     .then(() => {
                         this.navigation = this.book.navigation
-                        console.log(this.navigation)
                         return this.book.locations.generate()
                     })
                     .then(result => {
@@ -283,31 +286,34 @@
             // 改变字体大小
             changeFontSize(status) {
                 if (status === 0) {
-                    if (this.fontSize > 12) {
+                    if (this.setting.fontSize > 12) {
                         // 最小设置字号为12
-                        this.fontSize = this.fontSize - 2
-                        this.setFontSize(this.fontSize)
+                        this.setting.fontSize = this.setting.fontSize - 2
+                        this.setFontSize(this.setting.fontSize)
                     }
                 } else {
-                    if (this.fontSize < 24) {
+                    if (this.setting.fontSize < 24) {
                         // 最小设置字号为24
-                        this.fontSize = this.fontSize + 2
-                        this.setFontSize(this.fontSize)
+                        this.setting.fontSize = this.setting.fontSize + 2
+                        this.setFontSize(this.setting.fontSize)
                     }
                 }
+                setSetting(this.setting)
             },
             // 改变字体
             changeFontFamily(status) {
-                switch (status.target.value) {
-                    case 1:this.themes.font("微软雅黑");console.log(status.target.value);break;
-                    case 2:this.themes.font("楷体");console.log(status.target.value);break;
-                    case 3:this.themes.font("宋体");console.log(status.target.value);break;
-                    case 4:this.themes.font("苹方");console.log(status.target.value);break;
-                    case 5:this.themes.font("幼圆");console.log(status.target.value);break;
-
+                this.setFamily(status.target.value)
+                this.setting.fontFamily = status.target.value
+                setSetting(this.setting)
+            },
+            setFamily(index){
+                switch (index) {
+                    case 1:this.themes.font("微软雅黑");break;
+                    case 2:this.themes.font("楷体");break;
+                    case 3:this.themes.font("宋体");break;
+                    case 4:this.themes.font("苹方");break;
+                    case 5:this.themes.font("幼圆");break;
                 }
-                console.log(status)
-
             },
             // 切换字号
             setFontSize(size) {

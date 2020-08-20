@@ -53,13 +53,13 @@
 <!--                            新添加-->
 <!--                        </div>-->
                         <a-card-grid class="-book-pic" @click="openBook(book)" :title="book.title" @contextmenu="rightClick(book)">
-                            <div class="info"></div>
+<!--                            <div class="info"></div>-->
                             <img :src="book.url" width="180" />
                         </a-card-grid>
                         <div class="-book-title">{{book.title}}</div>
                     </div>
-                    <div class="empty-img" :style="'height:'+(pageHeight-90)+'px'">
-                        <a-empty description="点击&quot;添加图书&quot;添加书籍" v-show="books.length === 0" />
+                    <div v-show="books.length === 0" class="empty-img" :style="'height:'+(pageHeight-90)+'px'">
+                        <a-empty description="点击&quot;添加图书&quot;添加书籍"  />
                     </div>
                 </div>
             </div>
@@ -126,21 +126,13 @@
                 menu.append(new MenuItem({
                     type: 'separator',
                 }))
-                console.log()
                 menu.append(new MenuItem({
-                    label: '彻底删除',
+                    label: '删除',
                     icon: nativeImage.createFromPath('src/renderer/assets/delete.png'),
                     click: function () {
-                        // 执行remove方法，不能直接使用 this.removeItem
-                        // self.removeItem(id)
-                        console.log(book)
                         self.deleteBook(book)
-                        console.log(self.books)
-                        console.log(self.allBooks)
                     }
                 }))
-                // 第二个菜单
-                // menu.append( ... )
                 // 展示出来
                 menu.popup(remote.getCurrentWindow())
             },
@@ -163,6 +155,7 @@
                         break;
                     }
                 }
+                this.bookNum = this.books.length;
                 this.$forceUpdate();
             },
             getAllBookInfo(){
@@ -183,7 +176,6 @@
                     // 生成book
                     let book = new Epub(bookInfo.filePaths[0]);
                     book.loaded.metadata.then(result=>{
-                        console.log(bookInfo)
                         let path = "./books/"+result.identifier+".epub";
                         copyFile(bookInfo.filePaths[0],path,(res)=>{
                             console.log(res)
