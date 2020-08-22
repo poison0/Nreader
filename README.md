@@ -1,6 +1,6 @@
 # Nreader
 
-> epub 阅读器
+>本地epub阅读器
 
 #### 使用的开源技术
 * [electron](https://github.com/electron/electron),
