@@ -2,7 +2,7 @@
 
 > epub 阅读器
 
-#### 技术栈
+#### 使用的开源技术
 * [electron](https://github.com/electron/electron),
 * [Vue](https://github.com/vuejs/vue),
 * [electron-vue](https://github.com/SimulatedGREG/electron-vue),
