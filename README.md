@@ -1,8 +1,8 @@
 # Nreader
 
-> epub 阅读器
+>本地epub阅读器
 
-#### 技术栈
+#### 使用的开源技术
 * [electron](https://github.com/electron/electron),
 * [Vue](https://github.com/vuejs/vue),
 * [electron-vue](https://github.com/SimulatedGREG/electron-vue),
@@ -12,11 +12,10 @@
 
 
 #### 页面效果
-![image](https://github.com/poison0/Nreader/blob/master/showPic/2020-08-04%20235059.jpg)
+![image](https://github.com/poison0/Nreader/blob/master/showPic/2020-08-22%20193855.jpg)
 
-![image](https://github.com/poison0/Nreader/blob/master/showPic/2020-08-04%20235304.jpg)
+![image](https://github.com/poison0/Nreader/blob/master/showPic/2020-08-22%20194017.jpg)
 
-![image](https://github.com/poison0/Nreader/blob/master/showPic/2020-08-04%20235325.jpg)
 ---
 
 This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
