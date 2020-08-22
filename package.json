@@ -1,15 +1,16 @@
 {
-  "name": "reader",
+  "name": "Nreader",
   "version": "0.0.1",
   "author": "",
   "description": "An electron-vue project",
   "license": null,
-  "main": "./src/main/index.js",
+  "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
+    "packager": "electron-packager ./ Nreader -win=x32 --out ./OutApp  --overwrite",
     "dev": "node .electron-vue/dev-runner.js",
     "e2e": "npm run pack && mocha test/e2e",
     "pack": "npm run pack:main && npm run pack:renderer",
@@ -17,10 +18,11 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "test": "npm run unit && npm run e2e",
     "unit": "karma start test/unit/karma.conf.js",
+    "go": "electron-packager ./dist/electron Nreader --platform=win32 --arch=x64 --overwrite",
     "postinstall": ""
   },
   "build": {
-    "productName": "reader",
+    "productName": "Nreader",
     "appId": "com.nreader",
     "directories": {
       "output": "build"
@@ -90,6 +92,7 @@
     "electron-builder": "^22.7.0",
     "electron-debug": "^3.1.0",
     "electron-devtools-installer": "^3.1.1",
+    "electron-packager": "^15.1.0",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^3.2.0",
     "inject-loader": "^4.0.1",

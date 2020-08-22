@@ -23,20 +23,20 @@
                         </div>
                         <div class="strip" :class="{stripChecked:navigation === 0}"></div>
                     </div>
-                    <div class="bookItem" :class="{bookItemChecked:navigation === 1}" @click="chooseLabel(1)">
-                        <div class="bookLabel">
-                            <a-icon type="minus-circle"/>
-                            <div class="labelWord">未分类</div>
-                        </div>
-                        <div class="strip" :class="{stripChecked:navigation === 1}"></div>
-                    </div>
-                    <div class="bookItem" :class="{bookItemChecked:navigation === 2}" @click="chooseLabel(2)">
-                        <div class="bookLabel">
-                            <a-icon type="plus-square"/>
-                            <div class="labelWord">管理分类</div>
-                        </div>
-                        <div class="strip" :class="{stripChecked:navigation === 2}"></div>
-                    </div>
+<!--                    <div class="bookItem" :class="{bookItemChecked:navigation === 1}" @click="chooseLabel(1)">-->
+<!--                        <div class="bookLabel">-->
+<!--                            <a-icon type="minus-circle"/>-->
+<!--                            <div class="labelWord">未分类</div>-->
+<!--                        </div>-->
+<!--                        <div class="strip" :class="{stripChecked:navigation === 1}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="bookItem" :class="{bookItemChecked:navigation === 2}" @click="chooseLabel(2)">-->
+<!--                        <div class="bookLabel">-->
+<!--                            <a-icon type="plus-square"/>-->
+<!--                            <div class="labelWord">管理分类</div>-->
+<!--                        </div>-->
+<!--                        <div class="strip" :class="{stripChecked:navigation === 2}"></div>-->
+<!--                    </div>-->
                 </div>
             </div>
             <div class="-right-content">
@@ -94,6 +94,9 @@
             remote.getCurrentWindow().on('resize', (a) => {
                 self.pageHeight = window.innerHeight;
             })
+            ipcRenderer.on("bookClose",()=>{
+                this.getAllBookInfo()
+            })
            this.getAllBookInfo()
         },
         methods: {
@@ -102,7 +105,6 @@
                     this.books = [];
                     for (let i = 0; i < this.allBooks.length; i++) {
                         if(this.allBooks[i].title.indexOf(value) > -1){
-                            console.log(this.allBooks[i].title)
                             this.books.push(this.allBooks[i])
                         }
                     }
@@ -178,7 +180,6 @@
                     book.loaded.metadata.then(result=>{
                         let path = "./books/"+result.identifier+".epub";
                         copyFile(bookInfo.filePaths[0],path,(res)=>{
-                            console.log(res)
                         })
                         if (!isMeta(result.identifier)) {
                             this.getCoverURL(book,(res)=>{

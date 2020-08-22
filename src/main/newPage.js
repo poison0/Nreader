@@ -2,24 +2,28 @@
 import { BrowserWindow, ipcMain, screen } from 'electron';
 
 let win = null;
-const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080/#reader' : `file://${__dirname}/reader/index.html`;
+const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080/#reader' : `file://${__dirname}/index.html#reader`;
 
 /**
  * 创建新窗口函数
  */
 function createNewPageWindow(book) {
+  let isHideMenuBar = false
+  if(process.env.NODE_ENV !== 'development'){
+    isHideMenuBar = true;
+  }
   win = new BrowserWindow({
     width: 900,
     height: 700,
     minWidth: 500,
     minHeight: 130,
+    autoHideMenuBar:isHideMenuBar,
     show: false, // 先不让窗口显示
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
     },
   });
-
   win.webContents.on('did-finish-load', function() {
     win.webContents.send('ping', book);
   });

@@ -14,6 +14,10 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 function createWindow () {
+  let isHideMenuBar = false
+  if(process.env.NODE_ENV !== 'development'){
+    isHideMenuBar = true;
+  }
   /**
    * Initial window options
    */
@@ -23,6 +27,7 @@ function createWindow () {
     width: 1000,
     minWidth:600,
     minHeight:400,
+    autoHideMenuBar:isHideMenuBar,
     webPreferences:{
       webSecurity: false,
       nodeIntegration: true,

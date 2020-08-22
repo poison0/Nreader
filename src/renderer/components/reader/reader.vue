@@ -44,10 +44,11 @@
             </div>
         </div>
         <div class="read-wrapper">
-            <div id="read" :class="[bgColor,fontColor]" :style="'height:'+pageHeight+'px; -webkit-user-select:auto;'"></div>
+            <div id="read" :class="[bgColor,fontColor]" :style="'height:'+(pageHeight+10)+'px'"></div>
             <div class="mask">
                 <div class="left" @click="prevPage"></div>
-                <div class="center" @click="toggleTitle"></div>
+                <div class="center" @click="toggleTitle">
+                </div>
                 <div class="right" @click="nextPage"></div>
             </div>
         </div>
@@ -66,14 +67,14 @@
                     </svg>
                 </div>
                 <div class="chapter">
-                    <a-icon type="step-backward" title="上一章"/>
+                    <a-icon type="step-backward" title="上一页" @click="prevPage"/>
                 </div>
                 <div style="width:75%;margin-top:5px">
                     <a-slider id="test"  v-model="currentPage" :max="total" :min="0" @change="onLocationChange"
                               :step="1"/>
                 </div>
                 <div class="chapter">
-                    <a-icon type="step-forward" title="下一章"/>
+                    <a-icon type="step-forward" title="下一页" @click="nextPage"/>
                 </div>
             </div>
         </div>
@@ -110,10 +111,12 @@
     import SystemInformation from '../landingPage/SystemInformation'
     import Epub from 'epubjs'
     import indexMode from './indexMode'
-    import {setSetting,getSetting} from "../util/operDb";
+    import {setSetting,getSetting,setSchedule} from "../util/operDb";
     const remote = require('electron').remote;
+    const {app} = require('electron').remote;
     const ipcRenderer = require('electron').ipcRenderer;
     const BrowserWindow = remote.BrowserWindow;
+    const path = require('path');
     global.Epub = Epub
     export default {
         name: 'reader',
@@ -140,11 +143,13 @@
                 totalChapter:0, //总章节数
                 currentChapter:0, //当前章节数
                 isFullScreen:false,
+                bookMeta:{},
                 setting:{
                     bgColor:1,
                     fontSize:16,
                     fontFamily:1,
-                }
+                },
+                isLoad:true
             }
         },
         created() {
@@ -155,12 +160,28 @@
                 self.pageHeight = window.innerHeight -10;
                 this.$forceUpdate();
             })
+            //监视窗口关闭
+            remote.getCurrentWindow().on('close', (a) => {
+                this.setSchedule()
+                ipcRenderer.send('bookClose', 'success')
+            })
         },
         mounted() {
             let self = this
+
             ipcRenderer.on('ping', function (event, arg) {
-                self.path = JSON.parse(arg).path
-                self.showEpub(JSON.parse(arg).path);
+                self.bookMeta = JSON.parse(arg)
+                console.log(self.bookMeta.schedule)
+                if(self.bookMeta.schedule === 0){
+                    self.isLoad = false;
+                    ipcRenderer.send('asynchronous-message', 'success')
+                }
+
+                if(process.env.NODE_ENV !== 'development'){
+                    let path = app.getAppPath()+self.bookMeta.path;
+                    self.bookMeta.path = path.replace("\\resources\\app.asar.","")
+                }
+                self.showEpub(self.bookMeta.path);
             });
             let set = getSetting()
             if (set) {
@@ -200,8 +221,20 @@
                     win = null;
                 })
             },
+            //设置进度
+            setSchedule(){
+                setSchedule(this.bookMeta.id,this.currentPage)
+            },
             onLocationChange(index) {
                 this.rendition.display(this.locations.cfiFromLocation(index))
+            },
+            //启动时加载
+            onLocationChangeSync(index) {
+                ipcRenderer.send('asynchronous-message', 'success')
+                this.rendition.display(this.locations.cfiFromLocation(index)).then(()=>{
+                    this.syncIndex()
+                    console.log("133444")
+                })
             },
             handleChange(value) {
                 console.log(`selected ${value}`)
@@ -246,6 +279,9 @@
                     .then(result => {
                         this.locations = this.book.locations
                         this.total = this.locations.total
+                        if(this.isLoad){
+                            this.onLocationChangeSync(this.bookMeta.schedule)
+                        }
                         this.syncIndex();
                     })
             },
@@ -612,7 +648,7 @@
                 z-index: 100;
 
                 .left {
-                    flex: 0 0 100px;
+                    flex: 0 0 200px;
                 }
 
                 .center {
@@ -620,7 +656,7 @@
                 }
 
                 .right {
-                    flex: 0 0 100px;
+                    flex: 0 0 200px;
                 }
             }
         }
