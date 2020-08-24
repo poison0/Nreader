@@ -175,13 +175,18 @@
                 dialog.showOpenDialog(
                     {title: "book", filters: [{name: 'epub', extensions: ['epub', 'EPUB']}]
                     }).then((bookInfo)=>{
+
                     // 生成book
                     let book = new Epub(bookInfo.filePaths[0]);
                     book.loaded.metadata.then(result=>{
-                        let path = "./books/"+result.identifier+".epub";
+                        let identifier = result.identifier;
+                        if (!identifier) {
+                            identifier = this.getID(3)
+                        }
+                        let path = "./books/"+identifier+".epub";
                         copyFile(bookInfo.filePaths[0],path,(res)=>{
                         })
-                        if (!isMeta(result.identifier)) {
+                        if (!isMeta(identifier)) {
                             this.getCoverURL(book,(res)=>{
                                 setMeta(result,res,path);
                                 this.getAllBookInfo();
@@ -191,6 +196,9 @@
                         }
                     })
                 })
+            },
+            getID(length){
+                return Number(Math.random().toString().substr(3,length) + Date.now()).toString(36);
             },
             //提示
             openNotification(placement) {
