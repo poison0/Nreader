@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "ant-design-vue": "^1.6.4",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "epubjs": "^0.3.88",
     "fs-extra": "^9.0.1",
